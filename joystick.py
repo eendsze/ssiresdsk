@@ -1,8 +1,71 @@
 #!/usr/bin/env python
-# encoding: utf-8
+
 import pygame
+
+
+class myJoystic:
+    x = 0.0
+    y = 0.0
+    z = 0.0
+    xo = 0.0
+    yo = 0.0
+    zo = 0.0
+    def __init__(self) -> None:
+        if pygame.joystick.get_count() > 0:
+            self.joystick = pygame.joystick.Joystick(0)
+            self.joystick.init()
+            #self.name = self.joystick.get_name()
+            self.joyExist = True
+            #print("Joystick name: {}".format(self.name) )
+        else:
+            self.joyExist = False
+            print("Nincsen joystick hehehe")
+
+    def read(self):
+        if self.joyExist:
+            self.x =  self.joystick.get_axis(2) + self.xo
+            self.y = -self.joystick.get_axis(3) + self.yo
+            self.z = -self.joystick.get_axis(0) + self.zo
+        else:
+            self.z = 0.0
+            if pygame.key.get_pressed()[pygame.K_LEFT]:
+                self.z += 1.0
+            if pygame.key.get_pressed()[pygame.K_RIGHT]:
+                self.z -= 1.0
+            self.x = 0.0
+            if pygame.key.get_pressed()[pygame.K_a]:
+                self.x -= 1.0
+            if pygame.key.get_pressed()[pygame.K_d]:
+                self.x += 1.0
+            self.y = 0.0
+            if pygame.key.get_pressed()[pygame.K_s]:
+                self.y -= 1.0
+            if pygame.key.get_pressed()[pygame.K_w]:
+                self.y += 1.0
+        
+    def readOffset(self):
+        i = 0
+        xo = 0
+        yo = 0
+        zo = 0
+        while i < 10:
+            i +=1
+            xo -= self.joystick.get_axis(2)
+            yo += self.joystick.get_axis(3)
+            zo += self.joystick.get_axis(0)
+        self.xo = xo / 10.0
+        self.yo = yo / 10.0
+        self.zo = zo / 10.0
+
+
+
+
+
+
+"""
 pygame.init()
 clock = pygame.time.Clock()
+
 if pygame.joystick.get_count() > 0:
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
@@ -11,6 +74,7 @@ if pygame.joystick.get_count() > 0:
 else:
     print("Nincsen joystick hehehe")
     exit()
+
 
 axes = joystick.get_numaxes()
 while True:
@@ -23,9 +87,12 @@ while True:
             print("Joystick button pressed.")
         if event.type == pygame.JOYBUTTONUP:
             print("Joystick button released.")
+
     
     for i in range( axes ):
     # pygame.joystick.Joystick.get_axis
         axis = joystick.get_axis( i )
         print("Axis {} value: {:>6.3f}".format(i, axis) )
     clock.tick(3)
+
+    """

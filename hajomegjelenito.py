@@ -15,8 +15,8 @@ class HajoObject:
     position = pg.math.Vector2(0.0,0.0)
     rotation = 0.0
     #hajo sebessege [m/s, rad/s]
-    speed = pg.math.Vector2(0.0,4.2)
-    szogseb = 0.2
+    speed = pg.math.Vector2(0.0, 0.0)
+    szogseb = 0.0
     #relativ pozicio a megjeleniteshez
     midscreen = pg.math.Vector2(0,0)
     #hajo pontjai, [m]. Ezt atalakitjuk vektorokka a konstrutorban, azt lehet hasznalni
@@ -43,3 +43,8 @@ class HajoObject:
     def move(self, fps):
         self.position += (self.speed / fps)
         self.rotation += (self.szogseb / fps)
+
+    def setspeed(self, x, y, z):
+        self.speed.update(x,y)
+        self.szogseb = z
+
