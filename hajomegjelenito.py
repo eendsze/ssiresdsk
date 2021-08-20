@@ -10,7 +10,7 @@ class HajoObject:
     length = 13.64
     width = 4.1
     #skalazas a keperenyore m->pixel
-    scr_scale = 10.0
+    scr_scale = 30.0
     #hajo pozicioja, [m, rad]
     position = pg.math.Vector2(0.0,0.0)
     rotation = 0.0
@@ -47,4 +47,9 @@ class HajoObject:
     def setspeed(self, x, y, z):
         self.speed.update(x,y)
         self.szogseb = z
+
+    def setPosition(self, X):
+        self.position.x = X[0]
+        self.position.y = X[1]
+        self.rotation = X[2]
 

@@ -3,10 +3,12 @@
 import os
 import math
 import pygame as pg
-import hajomegjelenito as hm
+import hajomegjelenito
 import joystick
+import fizikaimodell
 
-fps = 100
+fps = 60
+dt = 1.0/fps
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 
@@ -15,8 +17,9 @@ def main():
     pg.init()
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
-    hajo = hm.HajoObject(screen)
+    hajo = hajomegjelenito.HajoObject(screen)
     joy = joystick.myJoystic()
+    valosModell = fizikaimodell.physicalShip()
 
     while 1:
         for event in pg.event.get():
@@ -25,10 +28,12 @@ def main():
             if event.type == pg.JOYBUTTONDOWN:
                 joy.readOffset()
  
-        hajo.draw()
         joy.read()
-        hajo.setspeed(joy.x*10.0, joy.y*10.0, joy.z)
-        hajo.move(fps)
+        valosModell.calculate(dt, [joy.y*10, joy.x*10, joy.z])
+        hajo.setPosition(valosModell.X)
+        hajo.draw()
+        #hajo.setspeed(joy.x*10.0, joy.y*10.0, joy.z)
+        #hajo.move(fps)
 
         pg.display.update()
         clock.tick(fps)
