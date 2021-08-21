@@ -10,7 +10,9 @@ class HajoObject:
     length = 13.64
     width = 4.1
     #skalazas a keperenyore m->pixel
-    scr_scale = 30.0
+    scr_scale = 100.0
+    #hajo tenyleges merete (a modell 1m hosszu)
+    ship_scale = 0.4
     #hajo pozicioja, [m, rad]
     position = pg.math.Vector2(0.0,0.0)
     rotation = 0.0
@@ -20,7 +22,8 @@ class HajoObject:
     #relativ pozicio a megjeleniteshez
     midscreen = pg.math.Vector2(0,0)
     #hajo pontjai, [m]. Ezt atalakitjuk vektorokka a konstrutorban, azt lehet hasznalni
-    hajoPoly = [(0, 6.82), (-1.35, 5.42), (-2.05, 0), (-2.05, -6.82),  (2.05, -6.82), (2.05, 0), (1.35, 5.42)]
+#    hajoPoly = [(0, 6.82), (-1.35, 5.42), (-2.05, 0), (-2.05, -6.82),  (2.05, -6.82), (2.05, 0), (1.35, 5.42)]
+    hajoPoly = [(1, 0), (0.79, -0.2), (0, -0.3), (-1, -0.3),  (-1, 0.3), (0, 0.3), (0.79, 0.2)]
     #elozo kirajzolt polygon a torleshez
     lastPoly = [(0,0), (0,0), (0,0)]
 
@@ -33,8 +36,8 @@ class HajoObject:
         #elozo torlese
         pg.draw.polygon(self.screen, BACKGND, self.lastPoly)
         #uj pozicio szamitasa
-        #forgatas, poziciora mozgatas, aztan skalazas:
-        shipmap = map(lambda x: (x.rotate_rad(self.rotation) + self.position) * self.scr_scale, self.hajoVect)
+        #forgatas es skalazas a valos meretre, poziciora mozgatas, aztan skalazas:
+        shipmap = map(lambda x: (x.rotate_rad(self.rotation) * self.ship_scale + self.position) * self.scr_scale, self.hajoVect)
         #flippelni kell lefele, es betenni a kepernyo kozepere
         self.lastPoly = list(map(lambda x: (x.x + self.midscreen.x, self.midscreen.y - x.y), shipmap))
         #uj pligon rajzolasa      

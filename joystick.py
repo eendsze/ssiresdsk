@@ -4,9 +4,9 @@ import pygame
 
 
 class myJoystic:
-    x = 0.0
-    y = 0.0
-    z = 0.0
+    elore = 0.0
+    jobbra = 0.0
+    forg = 0.0
     xo = 0.0
     yo = 0.0
     zo = 0.0
@@ -23,25 +23,25 @@ class myJoystic:
 
     def read(self):
         if self.joyExist:
-            self.x =  self.joystick.get_axis(2) + self.xo
-            self.y = -self.joystick.get_axis(3) + self.yo
-            self.z = -self.joystick.get_axis(0) + self.zo
+            self.jobbra =  self.joystick.get_axis(2) + self.xo
+            self.elore = -self.joystick.get_axis(3) + self.yo
+            self.forg = -self.joystick.get_axis(0) + self.zo
         else:
-            self.z = 0.0
+            self.forg = 0.0
             if pygame.key.get_pressed()[pygame.K_LEFT]:
-                self.z += 1.0
+                self.forg += 1.0
             if pygame.key.get_pressed()[pygame.K_RIGHT]:
-                self.z -= 1.0
-            self.x = 0.0
-            if pygame.key.get_pressed()[pygame.K_a]:
-                self.x -= 1.0
-            if pygame.key.get_pressed()[pygame.K_d]:
-                self.x += 1.0
-            self.y = 0.0
+                self.forg -= 1.0
+            self.elore = 0.0
             if pygame.key.get_pressed()[pygame.K_s]:
-                self.y -= 1.0
+                self.elore -= 1.0
             if pygame.key.get_pressed()[pygame.K_w]:
-                self.y += 1.0
+                self.elore += 1.0
+            self.jobbra = 0.0
+            if pygame.key.get_pressed()[pygame.K_d]:
+                self.jobbra -= 1.0
+            if pygame.key.get_pressed()[pygame.K_a]:
+                self.jobbra += 1.0
         
     def readOffset(self):
         i = 0

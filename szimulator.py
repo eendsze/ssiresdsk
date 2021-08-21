@@ -29,7 +29,8 @@ def main():
                 joy.readOffset()
  
         joy.read()
-        valosModell.calculate(dt, [joy.y*10, joy.x*10, joy.z])
+        # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
+        valosModell.calculate(dt, [joy.elore*2, joy.jobbra*-2, joy.forg/20])
         hajo.setPosition(valosModell.X)
         hajo.draw()
         #hajo.setspeed(joy.x*10.0, joy.y*10.0, joy.z)
