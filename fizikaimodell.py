@@ -26,16 +26,13 @@ class physicalShip:
     A = [0.0, 0.0, 0.0]
     # sebesseg x, y, szogsebesseg
     V = [0.0, 0.0, 0.0]
-    # m11, m22, m33
-    M = [2.0, 2.4, 0.04]
-    # csillapitas
-    D = [2.7, 13.4, 0.056]
-    Af = [1.7, 1.8, 1.6]
-    # pozicio
+    # pozicio, fix koordinatarendszerben
     X = [0.0, 0.0, 0.0]
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, dict) -> None:
+        self.M = dict["M"]
+        self.D = dict["D"]
+        self.Af = dict["Af"]
 
     #bemenet a dt, es az ero vektor
     def calculate(self, dt, F = [0.0, 0.0, 0.0]):
@@ -55,14 +52,6 @@ class physicalShip:
         self.X[1] += vy * dt
 
         # gyoursulasok updatelese a kovetkezo idopontra
-        """
-        # x irany
-        self.A[0] = (self.M[1]*Vk[1]*Vk[2] - self.D[0]*mypow(self.V[0], self.Af[0]) + F[0]) / self.M[0]
-        # y irany
-        self.A[1] = (-self.M[0]*Vk[0]*Vk[2] - self.D[1]*mypow(self.V[1], self.Af[1]) + F[1]) / self.M[1]
-        # z irany, szoggyorsulas
-        self.A[2] = (-(self.M[1]-self.M[0])*Vk[0]*Vk[1] - self.D[2]*mypow(self.V[2], self.Af[2]) + F[2]) / self.M[2]
-        """
         # x irany
         self.A[0] = (F[0] + self.M[1]*Vk[1]*Vk[2] - self.D[0]*mypow(self.V[0], self.Af[0])) / self.M[0]
         # y irany

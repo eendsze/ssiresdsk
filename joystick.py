@@ -38,9 +38,9 @@ class myJoystic:
             if pygame.key.get_pressed()[pygame.K_w]:
                 self.elore += 1.0
             self.jobbra = 0.0
-            if pygame.key.get_pressed()[pygame.K_d]:
-                self.jobbra -= 1.0
             if pygame.key.get_pressed()[pygame.K_a]:
+                self.jobbra -= 1.0
+            if pygame.key.get_pressed()[pygame.K_d]:
                 self.jobbra += 1.0
         
     def readOffset(self):
