@@ -31,18 +31,26 @@ Nagyhajo445 = {
     "D": [200, 2000, 200000],
     "Af": [1.7, 2.0, 1.6],
     "length": 13,
-    "zoom": 25
+    'offset': 1.0, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
+    "zoom": 25,
+    'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
+    'orrF': 950,
+    'farL': 5,
+    'farF': 950,
+    'motL': 2, # propellerek tavolsaga egymastol
+    'motF': 2000 #ez 200%-os is lehet egyelore
 }
 
 
 #ez egy komment
 def main():
     pg.init()
+    dict = Nagyhajo445
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
-    hajo = hajomegjelenito.HajoObject(screen, Nagyhajo445)
+    hajo = hajomegjelenito.HajoObject(screen, dict)
     joy = joystick.myJoystic()
-    valosModell = fizikaimodell.physicalShip(Nagyhajo445)
+    valosModell = fizikaimodell.physicalShip(dict)
 
     while 1:
         for event in pg.event.get():
@@ -53,12 +61,15 @@ def main():
  
         joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        valosModell.calculate(dt, [joy.elore*4000, joy.jobbra*-2000, joy.forg*8000])
+        FjobbM = joy.elore+joy.forg
+        FbalM = joy.elore-joy.forg
+        Forrs = max(min(1.0, -joy.jobbra+joy.forg), -1.0)
+        Ffars = max(min(1.0, -joy.jobbra-joy.forg), -1.0)
+        valosModell.calcForces(dt, [Forrs, Ffars, FjobbM, FbalM])
         hajo.setPosition(valosModell.X)
         hajo.setspeed(valosModell.V)
+        hajo.setThrust([Forrs, Ffars, FjobbM, FbalM])
         hajo.draw()
-        #hajo.setspeed(joy.x*10.0, joy.y*10.0, joy.z)
-        #hajo.move(fps)
 
         pg.display.update()
         clock.tick(fps)

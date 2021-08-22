@@ -33,6 +33,15 @@ class physicalShip:
         self.M = dict["M"]
         self.D = dict["D"]
         self.Af = dict["Af"]
+        # Sugarkormanyok es motork adatai. Ha nincs farsugar, akkkor annak az ereje 0.
+        # ha egy motor van, akkor a tavolsaguk nulla, es csak az egyiket kell nem 0-ra allitani
+        self.orrL = dict["orrL"] #orrsugar tavolsaga a kozepponttol
+        self.orrF = dict["orrF"] #orrsugar max ereje, [N]
+        self.farL = dict["farL"] #farsugar tavolsaga a kozepponttol
+        self.farF = dict["farF"] #farsugar max ereje, [N]
+        self.motL = dict['motL'] #motorok tavolsaga egymastol
+        self.motF = dict['motF'] #motorok toloereje, allo helyzetben
+
 
     #bemenet a dt, es az ero vektor
     def calculate(self, dt, F = [0.0, 0.0, 0.0]):
@@ -57,4 +66,11 @@ class physicalShip:
         # z irany, szoggyorsulas
         self.A[2] = (F[2] - (self.M[1]-self.M[0])*Vk[0]*Vk[1] - self.D[2]*mypow(self.V[2], self.Af[2])) / self.M[2]
 
-    
+    def calcForces(self, dt, Ak):
+        #az Ak egy lista 3 vagy negy elemmel, akutatorok %-ban: orrsugar, farsugar, jobb motor, bal motor
+        F = [0.0, 0.0, 0.0]
+        F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
+        F[1] = Ak[0]*self.orrF + Ak[1]*self.farF # ket orrsugar
+        F[2] = Ak[0]*self.orrF*self.orrL - Ak[1]*self.farF*self.farL + (Ak[2]-Ak[3])*self.motF*self.motL/2 # nyomatekok
+        self.calculate(dt, F)
+
