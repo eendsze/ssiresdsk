@@ -39,17 +39,15 @@ class physicalShip:
         # integralas
         # kozbenso sebesseg az integralashoz, ezzel szamol
         Vk = list(map(lambda v, a: v + a/2 * dt, self.V, self.A))
-        # ez lesz a kovetkezo sebesseg
+        # ez lesz a kovetkezo sebesseg, itt van az integralas
         self.V = list(map(lambda v, a: v + a * dt, self.V, self.A))
 
         # pozicio szamitasa, fix koordinatarendszerben
         # eloszor az uj szog kell
         self.X[2] += (self.V[2] + self.A[2]/2*dt)*dt
         # aztan ezzel eforgatva az uj pozicio
-        vx = math.cos(self.X[2])*Vk[0] - math.sin(self.X[2])*Vk[1]
-        vy= math.sin(self.X[2])*Vk[0] + math.cos(self.X[2])*Vk[1]
-        self.X[0] += vx * dt
-        self.X[1] += vy * dt
+        self.X[0] += (math.cos(self.X[2])*Vk[0] - math.sin(self.X[2])*Vk[1]) *dt
+        self.X[1] += (math.sin(self.X[2])*Vk[0] + math.cos(self.X[2])*Vk[1]) *dt
 
         # gyoursulasok updatelese a kovetkezo idopontra
         # x irany

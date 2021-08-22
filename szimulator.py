@@ -31,7 +31,7 @@ Nagyhajo445 = {
     "D": [200, 2000, 200000],
     "Af": [1.7, 2.0, 1.6],
     "length": 13,
-    "zoom": 50
+    "zoom": 25
 }
 
 
@@ -53,7 +53,7 @@ def main():
  
         joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        valosModell.calculate(dt, [joy.elore*4000, joy.jobbra*-2000, joy.forg*30000])
+        valosModell.calculate(dt, [joy.elore*4000, joy.jobbra*-2000, joy.forg*8000])
         hajo.setPosition(valosModell.X)
         hajo.setspeed(valosModell.V)
         hajo.draw()
