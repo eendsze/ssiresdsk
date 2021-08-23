@@ -10,10 +10,6 @@ class HajoObject:
     #hajo meretek, [m]
     length = 13.64
     width = 4.1
-    #skalazas a keperenyore m->pixel
-    #scr_scale = 100.0
-    #hajo tenyleges merete (a modell 1m hosszu)
-    #ship_scale = 0.4
     #hajo pozicioja, [m, rad]
     position = pg.math.Vector2(0.0,0.0)
     rotation = 0.0
@@ -49,10 +45,10 @@ class HajoObject:
         self.hajoVect = list(map(lambda x: pg.math.Vector2(x)*self.ship_scale+(self.hajoOffset, 0), self.hajoPoly))
         self.font = pg.font.Font(None, 24)
         #meghajtas kijelzeshez vektorok
-        self.thrustVects[0] = [(dict['orrL'], 0), (0, -1.0)] #orrsugar helye, iranya
-        self.thrustVects[1] = [(-dict['farL'], 0), (0, -1.0)] #farsugar helye, iranya
-        self.thrustVects[2] = [(self.hajoVect[3][0], dict['motL']/-2), (-1.0, 0)] #jobb motor 
-        self.thrustVects[3] = [(self.hajoVect[3][0], dict['motL']/2), (-1.0, 0)] #bal motor helye
+        self.thrustVects[0] = [(dict['orrL'], 0), (0, -dict['orrF']/1000)] #orrsugar helye, iranya
+        self.thrustVects[1] = [(-dict['farL'], 0), (0, -dict['farF']/1000)] #farsugar helye, iranya
+        self.thrustVects[2] = [(self.hajoVect[3][0], dict['motL']/-2), (-dict['motF']/1000, 0)] #jobb motor 
+        self.thrustVects[3] = [(self.hajoVect[3][0], dict['motL']/2), (-dict['motF']/1000, 0)] #bal motor helye
 
     def draw(self, color=WHITE):
         #elozo torlese
@@ -84,20 +80,26 @@ class HajoObject:
         for x in self.lastThVec:
             pg.draw.line(self.screen, BORDO, x[0], x[1], width = 3)
         # texts
-        text = self.font.render(f"Pos x: {self.position[0]:3.2f}, y: {self.position[1]:3.2f}. Speed: Vx: {self.vx:3.2f} [m/s], \
-Vy: {self.vy:3.2f} [m/s], W: {self.szogseb:1.3f} [rad/s]  ", True, WHITE, BACKGND)
+        text = self.font.render(f"Pos x: {self.position[0]:3.2f} [m], y: {self.position[1]:3.2f} [m], W: {self.rotation*360/math.pi/2:3.0f} [deg]. \
+Speed: Vx: {self.vx:3.2f} [m/s], Vy: {self.vy:3.2f} [m/s], W: {self.szogseb:1.3f} [rad/s]  ", True, WHITE, BACKGND)
         self.screen.blit(text, (10,10))
 
+    # sebesseg megadasa, sajat koordinatarendszerbe. Ez csak a kiirashoz kell
     def setspeed(self, V):
         self.vx = V[0]
         self.vy = V[1]
         self.szogseb = V[2]*3.6
-
+    # pozicio, fix kordinatarenszerben
     def setPosition(self, X):
         self.position.x = X[0]
         self.position.y = X[1]
         self.rotation = X[2]
-
+    # aktuator erok, sajat kordinatarenszerben
     def setThrust(self, T):
         self.Thrust = T
+
+    def resetPos(self):
+        #self.midscreen = (self.screen.get_width() / 2, self.screen.get_height() / 2) - self.position*self.scr_scale 
+        X = self.position*self.scr_scale
+        self.midscreen = (self.screen.get_width() / 2, self.screen.get_height() / 2) - pg.math.Vector2(X.x, -X.y)
 

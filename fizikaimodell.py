@@ -28,6 +28,13 @@ class physicalShip:
     V = [0.0, 0.0, 0.0]
     # pozicio, fix koordinatarendszerben
     X = [0.0, 0.0, 0.0]
+    # szel+hullamtolas hatasat kifejezo vektor. harom tagbol all:
+    hullamSzog = math.pi/2 # az erok ebben az iranyban hatnak
+    Fkornyezet = 1000 # ez az allando tag, kb a szel hatasa, ha oldalraol kapja
+    Fhullam = 2000 # ez a hullamzas amplitudoja ha oldalrol kapja
+    Whullam = 1.0 # ez a hullamzas szogfrekvenciaja, radian/sec
+    Khatulrol = 0.25 # hatulrol ekkora aranyu lesz az ero
+    wh = 0.0 # ez a futo valtozo
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
@@ -42,7 +49,6 @@ class physicalShip:
         self.motL = dict['motL'] #motorok tavolsaga egymastol
         self.motF = dict['motF'] #motorok toloereje, allo helyzetben
 
-
     #bemenet a dt, es az ero vektor
     def calculate(self, dt, F = [0.0, 0.0, 0.0]):
         # integralas
@@ -54,18 +60,27 @@ class physicalShip:
         # pozicio szamitasa, fix koordinatarendszerben
         # eloszor az uj szog kell
         self.X[2] += (self.V[2] + self.A[2]/2*dt)*dt
+        if self.X[2] > math.pi: self.X[2] -= math.pi*2
+        if self.X[2] < -math.pi: self.X[2] += math.pi*2
         # aztan ezzel eforgatva az uj pozicio
         self.X[0] += (math.cos(self.X[2])*Vk[0] - math.sin(self.X[2])*Vk[1]) *dt
         self.X[1] += (math.sin(self.X[2])*Vk[0] + math.cos(self.X[2])*Vk[1]) *dt
+        # kornyezeti hatas figyelembevetele, egy ero vektor altal
+        self.wh += self.Whullam * dt # hullam oraja, forgo szog
+        Fhull = self.Fkornyezet + self.Fhullam*math.sin(self.wh) #hullam + szel pillanatnyi ereje
+        beesesiSzog = (self.hullamSzog - self.X[2]) # ilyen szog alatt eri el a hajot
+        Fx = Fhull * self.Khatulrol * math.cos(beesesiSzog) # hajora eso x komponens
+        Fy = Fhull * math.sin(beesesiSzog) # y komponens
 
         # gyoursulasok updatelese a kovetkezo idopontra
         # x irany
-        self.A[0] = (F[0] + self.M[1]*Vk[1]*Vk[2] - self.D[0]*mypow(self.V[0], self.Af[0])) / self.M[0]
+        self.A[0] = (F[0] + Fx + self.M[1]*Vk[1]*Vk[2] - self.D[0]*mypow(self.V[0], self.Af[0])) / self.M[0]
         # y irany
-        self.A[1] = (F[1] - self.M[0]*Vk[0]*Vk[2] - self.D[1]*mypow(self.V[1], self.Af[1])) / self.M[1]
+        self.A[1] = (F[1] + Fy - self.M[0]*Vk[0]*Vk[2] - self.D[1]*mypow(self.V[1], self.Af[1])) / self.M[1]
         # z irany, szoggyorsulas
         self.A[2] = (F[2] - (self.M[1]-self.M[0])*Vk[0]*Vk[1] - self.D[2]*mypow(self.V[2], self.Af[2])) / self.M[2]
 
+    # ez a meghajto jelek alapjan szamolja a hajora hato eroket, es azzal hivja a calc-ot
     def calcForces(self, dt, Ak):
         #az Ak egy lista 3 vagy negy elemmel, akutatorok %-ban: orrsugar, farsugar, jobb motor, bal motor
         F = [0.0, 0.0, 0.0]

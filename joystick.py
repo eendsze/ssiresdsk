@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import pygame
-
+import hajomegjelenito
 
 class myJoystic:
     elore = 0.0
@@ -10,6 +10,8 @@ class myJoystic:
     xo = 0.0
     yo = 0.0
     zo = 0.0
+    sendReset = False
+
     def __init__(self) -> None:
         if pygame.joystick.get_count() > 0:
             self.joystick = pygame.joystick.Joystick(0)
@@ -23,9 +25,9 @@ class myJoystic:
 
     def read(self):
         if self.joyExist:
-            self.forg =  -self.joystick.get_axis(2) + self.xo
-            self.elore = -self.joystick.get_axis(3) + self.yo
-            self.jobbra = self.joystick.get_axis(0) + self.zo
+            self.forg =  -(self.joystick.get_axis(2) + self.xo)
+            self.elore = -(self.joystick.get_axis(3) + self.yo)
+            self.jobbra = (self.joystick.get_axis(0) + self.zo)
         else:
             self.jobbra = 0.0
             if pygame.key.get_pressed()[pygame.K_LEFT]:
@@ -42,7 +44,9 @@ class myJoystic:
                 self.forg += 1.0
             if pygame.key.get_pressed()[pygame.K_d]:
                 self.forg -= 1.0
-        
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
+                self.sendReset = True
+                    
     def readOffset(self):
         i = 0
         xo = 0
@@ -51,13 +55,17 @@ class myJoystic:
         while i < 10:
             i +=1
             xo -= self.joystick.get_axis(2)
-            yo += self.joystick.get_axis(3)
-            zo += self.joystick.get_axis(0)
+            yo -= self.joystick.get_axis(3)
+            zo -= self.joystick.get_axis(0)
         self.xo = xo / 10.0
         self.yo = yo / 10.0
         self.zo = zo / 10.0
 
-
+    def getReset(self) -> bool:
+        if self.sendReset:
+            self.sendReset = False
+            return True
+        return False
 
 
 

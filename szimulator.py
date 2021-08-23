@@ -37,7 +37,7 @@ Nagyhajo445 = {
     'orrF': 950,
     'farL': 5,
     'farF': 950,
-    'motL': 2, # propellerek tavolsaga egymastol
+    'motL': 2.2, # propellerek tavolsaga egymastol
     'motF': 2000 #ez 200%-os is lehet egyelore
 }
 
@@ -61,14 +61,16 @@ def main():
  
         joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        FjobbM = joy.elore+joy.forg
-        FbalM = joy.elore-joy.forg
-        Forrs = max(min(1.0, -joy.jobbra+joy.forg), -1.0)
-        Ffars = max(min(1.0, -joy.jobbra-joy.forg), -1.0)
-        valosModell.calcForces(dt, [Forrs, Ffars, FjobbM, FbalM])
+        AkJobbM = joy.elore+joy.forg
+        AkBalM = joy.elore-joy.forg
+        AkOrrs = max(min(1.0, -joy.jobbra+joy.forg), -1.0)
+        AkFars = max(min(1.0, -joy.jobbra-joy.forg), -1.0)
+        valosModell.calcForces(dt, [AkOrrs, AkFars, AkJobbM, AkBalM])
         hajo.setPosition(valosModell.X)
         hajo.setspeed(valosModell.V)
-        hajo.setThrust([Forrs, Ffars, FjobbM, FbalM])
+        hajo.setThrust([AkOrrs, AkFars, AkJobbM, AkBalM])
+        if joy.getReset():
+            hajo.resetPos()
         hajo.draw()
 
         pg.display.update()
