@@ -1,5 +1,5 @@
 """
-Ez a hajó fizikai modellje.
+Ez a hajó fizikai modellje a szimulaciohoz.
 Inputok: a hajóra ható erők és nyomtékok összessége
 Kimeneti változók: a hajó sebessége, gyorsulása, saját koordinátarendszerben
     +a hajó pozíciója és szöge fix koordinátarendszerben
@@ -30,16 +30,17 @@ class physicalShip:
     X = [0.0, 0.0, 0.0]
     # szel+hullamtolas hatasat kifejezo vektor. harom tagbol all:
     hullamSzog = math.pi/2 # az erok ebben az iranyban hatnak
-    Fkornyezet = 1000 # ez az allando tag, kb a szel hatasa, ha oldalraol kapja
-    Fhullam = 2000 # ez a hullamzas amplitudoja ha oldalrol kapja
-    Whullam = 1.0 # ez a hullamzas szogfrekvenciaja, radian/sec
-    Khatulrol = 0.25 # hatulrol ekkora aranyu lesz az ero
+    Fkornyezet = 0.0 # ez az allando tag, kb a szel hatasa, ha oldalraol kapja
+    Fhullam = 0.0 # ez a hullamzas amplitudoja ha oldalrol kapja
+    Whullam = 0.0 # ez a hullamzas szogfrekvenciaja, radian/sec
+    Khatulrol = 0.0 # hatulrol ekkora aranyu lesz az ero
     wh = 0.0 # ez a futo valtozo
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
         self.D = dict["D"]
         self.Af = dict["Af"]
+        self.kw = dict['kw']
         # Sugarkormanyok es motork adatai. Ha nincs farsugar, akkkor annak az ereje 0.
         # ha egy motor van, akkor a tavolsaguk nulla, es csak az egyiket kell nem 0-ra allitani
         self.orrL = dict["orrL"] #orrsugar tavolsaga a kozepponttol
@@ -78,14 +79,23 @@ class physicalShip:
         # y irany
         self.A[1] = (F[1] + Fy - self.M[0]*Vk[0]*Vk[2] - self.D[1]*mypow(self.V[1], self.Af[1])) / self.M[1]
         # z irany, szoggyorsulas
-        self.A[2] = (F[2] - (self.M[1]-self.M[0])*Vk[0]*Vk[1] - self.D[2]*mypow(self.V[2], self.Af[2])) / self.M[2]
+        self.A[2] = (F[2] - (self.M[1]-self.M[0])*Vk[0]*Vk[1]*self.kw - self.D[2]*mypow(self.V[2], self.Af[2])) / self.M[2]
+        # eredmeny a sebesseg vektor
+        return self.V
 
     # ez a meghajto jelek alapjan szamolja a hajora hato eroket, es azzal hivja a calc-ot
     def calcForces(self, dt, Ak):
-        #az Ak egy lista 3 vagy negy elemmel, akutatorok %-ban: orrsugar, farsugar, jobb motor, bal motor
+        #az Ak egy lista 4 elemmel, akutatorok %-ban: orrsugar, farsugar, jobb motor, bal motor
         F = [0.0, 0.0, 0.0]
         F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
         F[1] = Ak[0]*self.orrF + Ak[1]*self.farF # ket orrsugar
         F[2] = Ak[0]*self.orrF*self.orrL - Ak[1]*self.farF*self.farL + (Ak[2]-Ak[3])*self.motF*self.motL/2 # nyomatekok
-        self.calculate(dt, F)
+        return self.calculate(dt, F)
+
+    def setEnvironment(self, dict):
+        self.hullamszog = dict['hullamszog']
+        self.Fkornyezet = dict['Fkornyezet']
+        self.Fhullam = dict['Fhullam']
+        self.Whullam = dict['Whullam']
+        self.Khatulrol = dict['Khatulrol']
 

@@ -6,6 +6,8 @@ import pygame as pg
 import hajomegjelenito
 import joystick
 import fizikaimodell
+import szimulaltelemek
+import szabalyzoelemek
 
 fps = 60
 dt = 1.0/fps
@@ -25,11 +27,12 @@ Hajomodell1 = {
     "zoom": 100
 }
 
-Nagyhajo445 = {
+Nagyhajo445_modell = {
     #"M": [12600, 28900, 170000],
     "M": [12600, 18000, 170000],
     "D": [200, 2000, 200000],
     "Af": [1.7, 2.0, 1.6],
+    'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz
     "length": 13,
     'offset': 1.0, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 25,
@@ -38,19 +41,47 @@ Nagyhajo445 = {
     'farL': 5,
     'farF': 950,
     'motL': 2.2, # propellerek tavolsaga egymastol
-    'motF': 2000 #ez 200%-os is lehet egyelore
+    'motF': 2000, #ez 200%-os is lehet egyelore
+    'tauT': 0.5 # thrusterek idoallandoja, kb.
 }
 
+Nagyhajo445_becsles = {
+    "M": [10000, 20000, 200000],
+    "D": [200, 2000, 200000],
+    'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
+    'orrF': 950,
+    'farL': 5,
+    'farF': 950,
+    'motL': 2.2, # propellerek tavolsaga egymastol
+    'motF': 2000, #ez 200%-os is lehet egyelore
+    'tauT': 0.6 # thrusterek idoallandoja, kb.
+}
+
+
+Kornyezet1 = {
+    'hullamszog': math.pi/2, # az erok ebben az iranyban hatnak
+    'Fkornyezet': 300, # ez az allando tag, kb a szel hatasa, ha oldalraol kapja
+    'Fhullam': 2000, # ez a hullamzas amplitudoja ha oldalrol kapja
+    'Whullam': 1.0, # ez a hullamzas szogfrekvenciaja, radian/sec
+    'Khatulrol': 0.25 # hatulrol ekkora aranyu lesz az ero
+}
 
 #ez egy komment
 def main():
     pg.init()
-    dict = Nagyhajo445
+    dict = Nagyhajo445_modell
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, dict)
     joy = joystick.myJoystic()
     valosModell = fizikaimodell.physicalShip(dict)
+    valosModell.setEnvironment(Kornyezet1)
+    AkForces = [0.0, 0.0, 0.0, 0.0]
+    aktuators = szimulaltelemek.akutatorSim()
+    INS = szimulaltelemek.insSim()
+    modell = szabalyzoelemek.modell(Nagyhajo445_becsles)
+    PID = szabalyzoelemek.PIDcontroller()
+    Akt = [ 0, 0, 0, 0]
 
     while 1:
         for event in pg.event.get():
@@ -59,16 +90,24 @@ def main():
             if event.type == pg.JOYBUTTONDOWN:
                 joy.readOffset()
  
-        joy.read()
+        J = joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        AkJobbM = joy.elore+joy.forg
-        AkBalM = joy.elore-joy.forg
-        AkOrrs = max(min(1.0, -joy.jobbra+joy.forg), -1.0)
-        AkFars = max(min(1.0, -joy.jobbra-joy.forg), -1.0)
-        valosModell.calcForces(dt, [AkOrrs, AkFars, AkJobbM, AkBalM])
+        AkTemp = [
+            max(min(1.0, -joy.jobbra+joy.forg), -1.0),
+            max(min(1.0, -joy.jobbra-joy.forg), -1.0), 
+            joy.elore+joy.forg, 
+            joy.elore-joy.forg
+        ]
+        # itt van a szimulacio
+        AkForces = aktuators.process(dt, Akt)
+        V = valosModell.calcForces(dt, AkForces)
+        Vins = INS.process(dt, V)
+        Vmod = modell.process(dt, AkForces, Vins) 
+        Akt = PID.process(Vmod, J)
+        # megjelenito
         hajo.setPosition(valosModell.X)
-        hajo.setspeed(valosModell.V)
-        hajo.setThrust([AkOrrs, AkFars, AkJobbM, AkBalM])
+        hajo.setspeed(V)
+        hajo.setThrust(AkForces)
         if joy.getReset():
             hajo.resetPos()
         hajo.draw()

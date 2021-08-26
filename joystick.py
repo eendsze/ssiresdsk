@@ -44,8 +44,9 @@ class myJoystic:
                 self.forg += 1.0
             if pygame.key.get_pressed()[pygame.K_d]:
                 self.forg -= 1.0
-            if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.sendReset = True
+        if pygame.key.get_pressed()[pygame.K_SPACE]:
+            self.sendReset = True
+        return [self.elore, self.jobbra, self.forg]
                     
     def readOffset(self):
         i = 0
