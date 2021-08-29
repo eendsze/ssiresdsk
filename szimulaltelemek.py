@@ -16,12 +16,14 @@ class insSim:
         self.freq = fr
 
     def process(self, dt, V):
-        k = (1-dt*self.freq)
-        r = dt*self.amp
+        '''  k = (1-dt*self.freq)
+        r = dt*self.amp * 0.2
         self.vx += random.uniform(-r,r)
         self.vx *= k
         self.vy += random.uniform(-r,r)
         self.vy *= k
+        '''
+        #egyelore kiveszem a zajt, mert mas lesz
         return [V[0]+self.vx, V[1]+self.vy, V[2]]
 
 class akutatorSim:

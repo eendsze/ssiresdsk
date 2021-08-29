@@ -56,9 +56,9 @@ class PIDcontroller:
     def process(self, V, J):
         M = 30 * (J[2]*0.1 - V[2])
         M = max(min(1.0, M), -1.0)
-        Job = 10 * (J[1] - V[1])
+        Job = 10 * (J[1]*0.5 - V[1])
         Job = max(min(1.0, Job), -1.0)
-        Elo = 20 * (J[0]*2 - V[0])
+        Elo = 20 * (J[0] - V[0])
         Elo = max(min(1.0, Elo), -1.0)
         # orrsugar, farsugar, jobb motor, bal motor
         return [M+Job, -M+Job, Elo, Elo]

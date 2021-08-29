@@ -92,26 +92,29 @@ def main():
  
         J = joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        AkTemp = [
-            max(min(1.0, -joy.jobbra+joy.forg), -1.0),
-            max(min(1.0, -joy.jobbra-joy.forg), -1.0), 
-            joy.elore+joy.forg, 
-            joy.elore-joy.forg
-        ]
-        # itt van a szimulacio
+        
+        # *** itt van a szimulacio ***
+        # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. Ez az aktuatorok idobeni viselkedeset modellezi
+        # TODO ebbe kene tenni az ero szamitast is, most csak idoallandot szamit, az is fixen van bebetonozva
         AkForces = aktuators.process(dt, Akt)
+        # Ez az adatot kapja a hajo szimulator, ami alapjan a rajzolas is megy
+        # TODO ez nem jo, a valos es a szimulator modell is ugyanazt a szamitott aktuator erot kapja...
         V = valosModell.calcForces(dt, AkForces)
+        # A szimulatorbol a hajo sebessege bemegy az INS-t szimulalo egysegbe
         Vins = INS.process(dt, V)
+        # Az aktuatorok jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. Itt lenne a sensor fusion
         Vmod = modell.process(dt, AkForces, Vins) 
+        # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(Vmod, J)
-        # megjelenito
+
+        # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)
         hajo.setspeed(V)
         hajo.setThrust(AkForces)
         if joy.getReset():
             hajo.resetPos()
         hajo.draw()
-
+        # Ez is megjelenites
         pg.display.update()
         clock.tick(fps)
 
