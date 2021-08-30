@@ -27,13 +27,13 @@ class insSim:
         return [V[0]+self.vx, V[1]+self.vy, V[2]]
 
 class akutatorSim:
-    AkForces = [0.0, 0.0, 0.0, 0.0]
+    AkForces = [0.0, 0.0, 0.0, 0.0] # orrsugar, farsugar, jobb motor, bal motor
 
-    def __init__(self, ta = 0.5) -> None:
-        self.tau = ta
+    def __init__(self, dict) -> None:
+        self.tau = [dict['tauT'], dict['tauT'], dict['tauM'], dict['tauM']]
 
     # Ak: orrsugar, farsugar, jobb motor, bal motor
     def process(self, dt, Ak):
-        self.AkForces = list(map(lambda x,y: x + (y-x)/self.tau*dt, self.AkForces, Ak))
+        self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, Ak, self.tau))
         return self.AkForces
 

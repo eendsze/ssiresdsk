@@ -42,7 +42,8 @@ Nagyhajo445_modell = {
     'farF': 950,
     'motL': 2.2, # propellerek tavolsaga egymastol
     'motF': 2000, #ez 200%-os is lehet egyelore
-    'tauT': 0.5 # thrusterek idoallandoja, kb.
+    'tauT': 0.5, # thrusterek idoallandoja, kb.
+    'tauM': 0.5 # motorok idoallandoja
 }
 
 Nagyhajo445_becsles = {
@@ -54,7 +55,8 @@ Nagyhajo445_becsles = {
     'farF': 950,
     'motL': 2.2, # propellerek tavolsaga egymastol
     'motF': 2000, #ez 200%-os is lehet egyelore
-    'tauT': 0.6 # thrusterek idoallandoja, kb.
+    'tauT': 0.6, # thrusterek idoallandoja, kb.
+    'tauM': 0.8 # motorok idoallandoja
 }
 
 
@@ -77,11 +79,11 @@ def main():
     valosModell = fizikaimodell.physicalShip(dict)
     valosModell.setEnvironment(Kornyezet1)
     AkForces = [0.0, 0.0, 0.0, 0.0]
-    aktuators = szimulaltelemek.akutatorSim()
+    aktuators = szimulaltelemek.akutatorSim(dict)
     INS = szimulaltelemek.insSim()
     modell = szabalyzoelemek.modell(Nagyhajo445_becsles)
     PID = szabalyzoelemek.PIDcontroller()
-    Akt = [ 0, 0, 0, 0]
+    Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
 
     while 1:
         for event in pg.event.get():
@@ -92,7 +94,7 @@ def main():
  
         J = joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-        
+
         # *** itt van a szimulacio ***
         # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. Ez az aktuatorok idobeni viselkedeset modellezi
         # TODO ebbe kene tenni az ero szamitast is, most csak idoallandot szamit, az is fixen van bebetonozva
@@ -105,7 +107,7 @@ def main():
         # Az aktuatorok jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. Itt lenne a sensor fusion
         Vmod = modell.process(dt, AkForces, Vins) 
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
-        Akt = PID.process(Vmod, J)
+        Akt = PID.process(dt, Vmod, J)
 
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)

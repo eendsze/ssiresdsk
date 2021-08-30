@@ -2,6 +2,7 @@
 Ebben a fileban lesznek a szabalyzo fobb elemei: hajo modell, PID szabalyzok, thruster eroelosztas
 '''
 import math
+import pidcont
 
 # hajo fizikai modell. le van egyszerusitve, nincs hatvanyozas a csillapitasban, csak a viszszintes mozgast szamolja
 class modell:
@@ -50,15 +51,14 @@ class modell:
 
 class PIDcontroller:
     def __init__(self) -> None:
-        pass
+        self.xpid = pidcont.PIDclass(3.5,5,5)
+        self.ypid = pidcont.PIDclass(5.5,8,5)
+        self.zpid = pidcont.PIDclass(6,12,5)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg
-    def process(self, V, J):
-        M = 30 * (J[2]*0.1 - V[2])
-        M = max(min(1.0, M), -1.0)
-        Job = 10 * (J[1]*0.5 - V[1])
-        Job = max(min(1.0, Job), -1.0)
-        Elo = 20 * (J[0] - V[0])
-        Elo = max(min(1.0, Elo), -1.0)
+    def process(self, dt, V, J):
+        M = self.zpid.process((J[2]*0.1 - V[2]), dt)
+        Job = self.ypid.process((J[1]*0.5 - V[1]), dt)
+        Elo = self.xpid.process((J[0] - V[0]), dt)
         # orrsugar, farsugar, jobb motor, bal motor
         return [M+Job, -M+Job, Elo, Elo]

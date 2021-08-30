@@ -31,9 +31,9 @@ class myJoystic:
         else:
             self.jobbra = 0.0
             if pygame.key.get_pressed()[pygame.K_LEFT]:
-                self.jobbra -= 1.0
-            if pygame.key.get_pressed()[pygame.K_RIGHT]:
                 self.jobbra += 1.0
+            if pygame.key.get_pressed()[pygame.K_RIGHT]:
+                self.jobbra -= 1.0
             self.elore = 0.0
             if pygame.key.get_pressed()[pygame.K_s]:
                 self.elore -= 1.0
