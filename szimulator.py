@@ -97,7 +97,7 @@ def main():
 
         # *** itt van a szimulacio ***
         # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. Ez az aktuatorok idobeni viselkedeset modellezi
-        # TODO ebbe kene tenni az ero szamitast is, most csak idoallandot szamit, az is fixen van bebetonozva
+        # TODO ebbe kene tenni az ero szamitast is, most csak idoallandot szamit
         AkForces = aktuators.process(dt, Akt)
         # Ez az adatot kapja a hajo szimulator, ami alapjan a rajzolas is megy
         # TODO ez nem jo, a valos es a szimulator modell is ugyanazt a szamitott aktuator erot kapja...
