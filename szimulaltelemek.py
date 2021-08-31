@@ -8,23 +8,27 @@ import random
 # INS szimulator. Az INS hibajat szimulalja. A hiba egy feher zaj integralasabol adodik, amit alulateresztovel
 # szurunk, hogy ne szalljon el. A cel hogy hasonlo hibat adjon, mint a GPS-es INS
 class insSim:
+    # hibak
     vx = 0.0 #integratorok
     vy = 0.0
-
+    time = 0
+  
     def __init__(self, am = 1.0, fr = 0.025) -> None:
         self.amp = am
         self.freq = fr
 
     def process(self, dt, V):
-        '''  k = (1-dt*self.freq)
-        r = dt*self.amp * 0.2
-        self.vx += random.uniform(-r,r)
-        self.vx *= k
-        self.vy += random.uniform(-r,r)
-        self.vy *= k
-        '''
-        #egyelore kiveszem a zajt, mert mas lesz
-        return [V[0]+self.vx, V[1]+self.vy, V[2]]
+        # merem az idot, masodpercenkent 4x jon gps adat
+        self.time += dt
+        r = 0.1
+        # 1/4-ed sec-enkent jon ujabb minta, akkor ugrik a hiba
+        if self.time > 0.25:
+            self.time -= 0.25
+            self.vx = V[0] + random.uniform(-r,r)
+            self.vy = V[1] + random.uniform(-r,r)
+
+        # ez meg nyersen, igy meg nagy a hiba
+        return [self.vx, self.vy, V[2]]
 
 class akutatorSim:
     AkForces = [0.0, 0.0, 0.0, 0.0] # orrsugar, farsugar, jobb motor, bal motor

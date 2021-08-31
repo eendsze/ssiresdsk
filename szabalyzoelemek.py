@@ -8,6 +8,10 @@ import pidcont
 class modell:
     # sebesseg x, y, szogsebesseg
     V = [0.0, 0.0, 0.0]
+    # szurt INS X, Y sebesseg jel
+    Vsz = [0.0, 0.0]
+    # ez a gyorsulas felulatereszto szurojenek a "kondenzatora"
+    CAsz = [0.0, 0.0]
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
@@ -27,32 +31,43 @@ class modell:
     # a V a sebesseg vektor, amit az INS-tol kap
     # kimenet a szamitott sebessegek, a szabalyzohoz
     def process(self, dt, Ak, V):
+        l = dt * 0.2 # egyelore ez a szuresi idoallando
         # erok szamitasa az aktuatorok vezerlo jelei alapjan
         F = [0.0, 0.0]
         F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
         F[1] = Ak[0]*self.orrF + Ak[1]*self.farF # ket orrsugar
 
         # sebessegek pontositasa az INS alapjan
-        k = 0.9
-        self.V = list(map(lambda v, ins: (1-k)*v + k*ins, self.V, V))
-
-        # mozgasegyenletek
-        # gyoursulasok szamitasa
-        A=[0.0,0.0]
-        A[0] = (F[0] + self.M[1]*self.V[1]*self.V[2] - self.D[0]*self.V[0]) / self.M[0]
-        A[1] = (F[1] - self.M[0]*self.V[0]*self.V[2] - self.D[1]*self.V[1]) / self.M[1]
-        # integralas. Az 1-k csak a szeperzekem miatt kell
-        self.V[0] = self.V[0]+A[0]*dt*(1-k)
-        self.V[1] = self.V[1]+A[1]*dt*(1-k)
+        # Az INS sebessege egy idoallandoval huzza maga utan a V-t, a hajo sebesseget
+        for i in range(2):
+            self.V[i] += (V[i] - self.V[i]) * l
+        # a szogsebesseget atveszem valtoztatas nelkul az INS-tol
         self.V[2] = V[2]
+
+        # mozgasegyenletek. A keletkezo gyorsulast szurom felulatereszto szurovel
+        # gyoursulasok szamitasa, hozzaadjuk a "soros kondi" erteket is
+        A=[0.0,0.0]
+        A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2] - self.D[0]*self.V[0]) / self.M[0]
+        A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2] - self.D[1]*self.V[1]) / self.M[1]
+        #A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2]) / self.M[0]
+        #A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2]) / self.M[1]
+
+        for i in range(2):
+            # soros kondi kisulese
+            self.CAsz[i] -= A[i] * l
+            # integralas. A gyorsitast hozzadom V-hez
+            self.V[i] += A[i]*dt
+
+        #print(f'Vx {self.V[0]:3.2f} Vxins {V[0]:3.2f}, Vy {self.V[1]:3.2f}, Vyins {V[1]:3.2f} Ax {A[0]:3.2f}, Ay {A[1]:3.2f}  \r', end='', flush=True)
+        print(f'Vx {self.V[0]:3.3f} Vxins {V[0]:3.2f} Ax {A[0]:3.4f}  \r', end='', flush=True)
 
         # eredmeny a sebesseg vektor
         return self.V
 
 class PIDcontroller:
     def __init__(self) -> None:
-        self.xpid = pidcont.PIDclass(3.5,5,5)
-        self.ypid = pidcont.PIDclass(5.5,8,5)
+        self.xpid = pidcont.PIDclass(3.5,5,10)
+        self.ypid = pidcont.PIDclass(5.5,8,10)
         self.zpid = pidcont.PIDclass(6,12,5)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg
