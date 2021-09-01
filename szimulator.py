@@ -31,7 +31,8 @@ Nagyhajo445_modell = {
     #"M": [12600, 28900, 170000],
     "M": [12600, 18000, 170000],
     "D": [200, 2000, 200000],
-    "Af": [1.7, 2.0, 1.6],
+#    "Af": [1.7, 2.0, 1.6],
+    "Af": [1, 1, 1],
     'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz
     "length": 13,
     'offset': 1.0, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
@@ -47,7 +48,7 @@ Nagyhajo445_modell = {
 }
 
 Nagyhajo445_becsles = {
-    "M": [12600, 20000, 200000],
+    "M": [10000, 20000, 200000],
     "D": [200, 2000, 200000],
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,

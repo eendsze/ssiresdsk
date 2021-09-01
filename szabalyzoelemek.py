@@ -12,6 +12,8 @@ class modell:
     Vsz = [0.0, 0.0]
     # ez a gyorsulas felulatereszto szurojenek a "kondenzatora"
     CAsz = [0.0, 0.0]
+    # ebben integralja a gyorsulast
+    Va = [0.0, 0.0]
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
@@ -31,16 +33,18 @@ class modell:
     # a V a sebesseg vektor, amit az INS-tol kap
     # kimenet a szamitott sebessegek, a szabalyzohoz
     def process(self, dt, Ak, V):
-        l = dt * 0.2 # egyelore ez a szuresi idoallando
+        l = dt * 0.5 # egyelore ez a szuresi idoallando
+        # kell egy meg hosszabb idoallando is
+        ll = 0.1*l
         # erok szamitasa az aktuatorok vezerlo jelei alapjan
         F = [0.0, 0.0]
         F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
         F[1] = Ak[0]*self.orrF + Ak[1]*self.farF # ket orrsugar
 
         # sebessegek pontositasa az INS alapjan
-        # Az INS sebessege egy idoallandoval huzza maga utan a V-t, a hajo sebesseget
+        # Az INS sebesseg adatat megszurom -> Vsz
         for i in range(2):
-            self.V[i] += (V[i] - self.V[i]) * l
+            self.Vsz[i] += (V[i] - self.Vsz[i]) * l
         # a szogsebesseget atveszem valtoztatas nelkul az INS-tol
         self.V[2] = V[2]
 
@@ -56,10 +60,15 @@ class modell:
             # soros kondi kisulese
             self.CAsz[i] -= A[i] * l
             # integralas. A gyorsitast hozzadom V-hez
-            self.V[i] += A[i]*dt
+            self.Va[i] += A[i]*dt
+            # a Va-ra kell megy egy lassu alulatereszto, azaz DC visszahuzas, hogy az integralasi hibak miatt ne mehessen el.
+            self.Va[i] -= self.Va[i]*ll
+            # vegul a sebesseg szamitasa
+            self.V[i] = self.Vsz[i] + self.Va[i]
 
         #print(f'Vx {self.V[0]:3.2f} Vxins {V[0]:3.2f}, Vy {self.V[1]:3.2f}, Vyins {V[1]:3.2f} Ax {A[0]:3.2f}, Ay {A[1]:3.2f}  \r', end='', flush=True)
-        print(f'Vx {self.V[0]:3.3f} Vxins {V[0]:3.2f} Ax {A[0]:3.4f}  \r', end='', flush=True)
+        #print(f'Vx {self.V[0]:3.3f} Vxins {V[0]:3.2f} Ax {A[0]:3.4f}  \r', end='', flush=True)
+        print(f'Vy {self.V[1]:3.3f} Vyins {V[1]:3.2f} Va {self.Va[1]:3.2f} Vsz {self.Vsz[1]:3.2f}   \r', end='', flush=True)
 
         # eredmeny a sebesseg vektor
         return self.V
