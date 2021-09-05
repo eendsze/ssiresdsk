@@ -9,11 +9,13 @@ class modell:
     # sebesseg x, y, szogsebesseg
     V = [0.0, 0.0, 0.0]
     # szurt INS X, Y sebesseg jel
-    Vsz = [0.0, 0.0]
-    # ez a gyorsulas felulatereszto szurojenek a "kondenzatora"
-    CAsz = [0.0, 0.0]
-    # ebben integralja a gyorsulast
-    Va = [0.0, 0.0]
+    Vszurt = [0.0, 0.0]
+    # a modell alapjan szamitott sebesseg
+    Vmod = [0.0, 0.0]
+    # ez meg a Vmod felulatereszto uatni sebesseg
+    Vmsz = [0.0, 0.0]
+    # ez a sebesseg felulatereszto szurojenek a "kondenzatora"
+    CVsz = [0.0, 0.0]
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
@@ -33,9 +35,7 @@ class modell:
     # a V a sebesseg vektor, amit az INS-tol kap
     # kimenet a szamitott sebessegek, a szabalyzohoz
     def process(self, dt, Ak, V):
-        l = dt * 0.1 # egyelore ez a szuresi idoallando
-        # kell egy meg hosszabb idoallando is, az integralasi hiba elfogyasztasara
-        ll = 0.05*l
+        l = dt * 0.25 # egyelore ez a szuresi idoallando
         # erok szamitasa az aktuatorok vezerlo jelei alapjan
         F = [0.0, 0.0]
         F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
@@ -44,31 +44,31 @@ class modell:
         # sebessegek pontositasa az INS alapjan
         # Az INS sebesseg adatat megszurom -> Vsz
         for i in range(2):
-            self.Vsz[i] += (V[i] - self.Vsz[i]) * l
+            self.Vszurt[i] += (V[i] - self.Vszurt[i]) * l
         # a szogsebesseget atveszem valtoztatas nelkul az INS-tol
         self.V[2] = V[2]
 
-        # mozgasegyenletek. A keletkezo gyorsulast szurom felulatereszto szurovel
-        # gyoursulasok szamitasa, hozzaadjuk a "soros kondi" erteket is
+        # mozgasegyenletek.
+        # fontos a csillapitas, amit a modellbol adodo sebesseggel szamitok
         A=[0.0,0.0]
-        #A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2] - self.D[0]*self.V[0]) / self.M[0]
-        #A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2] - self.D[1]*self.V[1]) / self.M[1]
-        A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2]) / self.M[0]
-        A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2]) / self.M[1]
+        A[0] = (F[0] + self.M[1]*self.V[1]*self.V[2] - self.D[0]*self.Vmod[0]) / self.M[0]
+        A[1] = (F[1] - self.M[0]*self.V[0]*self.V[2] - self.D[1]*self.Vmod[1]) / self.M[1]
+        #A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2]) / self.M[0]
+        #A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2]) / self.M[1]
 
         for i in range(2):
+            # integralas. A gyorsitast hozzadom Vmod-hez
+            self.Vmod[i] += A[i]*dt
+            # szurt mdell sebesseg szamitasa
+            self.Vmsz[i] = self.Vmod[i] + self.CVsz[i]
             # soros kondi kisulese
-            self.CAsz[i] -= A[i] * l
-            # integralas. A gyorsitast hozzadom V-hez
-            self.Va[i] += A[i]*dt
-            # a Va-ra kell megy egy lassu alulatereszto, azaz DC visszahuzas, hogy az integralasi hibak miatt ne mehessen el.
-            self.Va[i] -= self.Va[i]*ll
+            self.CVsz[i] -= self.Vmsz[i] * l
             # vegul a sebesseg szamitasa
-            self.V[i] = self.Vsz[i] + self.Va[i]
+            self.V[i] = self.Vszurt[i] + self.Vmsz[i]
 
         #print(f'Vx {self.V[0]:03.2f} Vxins {V[0]:03.2f}, Vy {self.V[1]:03.2f}, Vyins {V[1]:03.2f} Vax {self.Va[0]:03.2f}, Vay {self.Va[1]:3.2f}  \r', end='', flush=True)
-        print(f'Vx {self.V[0]:+03.3f} Vxins {V[0]:+03.2f} Vszx {self.Vsz[0]:+03.2f} Ax {A[0]:+03.4f} Caszx {self.CAsz[0]:+03.4f} Vax {self.Va[0]:+03.4f} | ', end='')
-        print(f'Vy {self.V[1]:+03.3f} Vyins {V[1]:+03.2f} Vszy {self.Vsz[1]:+03.2f} Ay {A[1]:+03.4f} Caszy {self.CAsz[1]:+03.4f} Vay {self.Va[1]:+03.4f} \r', end='', flush=True)
+        print(f'Vx {self.V[0]:+03.3f} Vxins {V[0]:+03.2f} Vszx {self.Vszurt[0]:+03.2f} Ax {A[0]:+03.4f} Cvszx {self.CVsz[0]:+03.4f} Vmodx {self.Vmod[0]:+03.3f} Vmszx {self.Vmsz[0]:+03.3f} | ', end='')
+        print(f'Vy {self.V[1]:+03.3f} Vyins {V[1]:+03.2f} Vszy {self.Vszurt[1]:+03.2f} Ay {A[1]:+03.4f} Cvszy {self.CVsz[1]:+03.4f} Vmody {self.Vmod[1]:+03.3f} Vmszy {self.Vmsz[1]:+03.3f} \r', end='', flush=True)
 
         # eredmeny a sebesseg vektor
         return self.V

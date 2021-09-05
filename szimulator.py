@@ -48,7 +48,7 @@ Nagyhajo445_modell = {
 }
 
 Nagyhajo445_becsles = {
-    "M": [10000, 20000, 200000],
+    "M": [15000, 20000, 200000],
     "D": [200, 2000, 200000],
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,
@@ -66,7 +66,7 @@ Kornyezet1 = {
     'Fkornyezet': 300, # ez az allando ero tag, kb a szel hatasa, ha oldalraol kapja
     'Fhullam': 2000, # ez a hullamzasi ero amplitudoja ha oldalrol kapja
     'Whullam': 1.0, # ez a hullamzas szogfrekvenciaja, radian/sec
-    'Khatulrol': 0.25 # hossaban ekkora aranyu lesz az ero. Marmoith ha a hajot hosszaban eri
+    'Khatulrol': 0.25 # hosszaban ekkora aranyu lesz az ero. Marmint ha a hajot hosszaban eri
 }
 
 #ez egy komment
