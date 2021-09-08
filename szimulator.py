@@ -9,7 +9,7 @@ import fizikaimodell
 import szimulaltelemek
 import szabalyzoelemek
 
-fps = 100
+fps = 50
 dt = 1.0/fps
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
