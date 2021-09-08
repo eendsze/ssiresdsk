@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import pygame
-import hajomegjelenito
+
 
 class myJoystic:
     elore = 0.0
@@ -25,9 +25,9 @@ class myJoystic:
 
     def read(self):
         if self.joyExist:
-            self.forg =  -(self.joystick.get_axis(2) + self.xo)
+            self.jobbra =  -(self.joystick.get_axis(2) + self.xo)
             self.elore = -(self.joystick.get_axis(3) + self.yo)
-            self.jobbra = (self.joystick.get_axis(0) + self.zo)
+            self.forg = -(self.joystick.get_axis(0) + self.zo)
         else:
             self.jobbra = 0.0
             if pygame.key.get_pressed()[pygame.K_LEFT]:

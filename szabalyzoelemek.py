@@ -74,16 +74,33 @@ class modell:
         return self.V
 
 class PIDcontroller:
-    def __init__(self) -> None:
-        self.xpid = pidcont.PIDclass(3.5,5,2)
-        self.ypid = pidcont.PIDclass(5.5,8,2)
-        self.zpid = pidcont.PIDclass(6,12,2)
+    def __init__(self, dict) -> None:
+        # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez a frekvencia kb az aktuator idoallandojaval egyezik meg (1/2pi...)
+        tau = dict['tauM']
+        p = dict['M'][0] / (dict['motF']*2 * tau)
+        i = p*dict['D'][0]/dict['M'][0]
+        d = p*tau
+        self.xpid = pidcont.PIDclass(p, i, d)
+
+        tau = dict['tauT']
+        p = dict['M'][1] / ((dict['orrF'] + dict['farF']) * tau)
+        i = p*dict['D'][1]/dict['M'][1]
+        d = p*tau
+        self.ypid = pidcont.PIDclass(p, i, d)
+
+        tau = max(dict['tauT'], dict['tauM'])
+        # az Mi a motorok nyomatek kepzese, fugg a nyomatek elosztastol is
+        Mi = 0.5 * dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
+        p = dict['M'][2] / (Mi * tau)
+        i = p*dict['D'][2]/dict['M'][2]
+        d = p*tau
+        self.zpid = pidcont.PIDclass(p, i, d)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg
     def process(self, dt, V, J):
-        M = self.zpid.process((J[2]*0.2 - V[2]), dt)
-        Job = self.ypid.process((J[1]*0.5 - V[1]), dt)
-        Elo = self.xpid.process((J[0] - V[0]), dt)
+        M = self.zpid.process((J[2]*0.4 - V[2]), dt)
+        Job = self.ypid.process((J[1]*0.15 - V[1]), dt)
+        Elo = self.xpid.process((J[0]*0.3 - V[0]), dt)
         # Erok szetosztasa
         # orrsugar, farsugar, jobb motor, bal motor
-        return [Job+M, Job-M, Elo+M*3, Elo-M*3]
+        return [Job+M, Job-M, Elo+M, Elo-M]

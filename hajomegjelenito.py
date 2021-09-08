@@ -88,7 +88,7 @@ Speed: Vx: {self.vx:3.2f} [m/s], Vy: {self.vy:3.2f} [m/s], W: {self.szogseb:1.3f
     def setspeed(self, V):
         self.vx = V[0]
         self.vy = V[1]
-        self.szogseb = V[2]*3.6
+        self.szogseb = V[2]
     # pozicio, fix kordinatarenszerben
     def setPosition(self, X):
         self.position.x = X[0]
