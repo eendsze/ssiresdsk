@@ -4,7 +4,8 @@ Ebben a fileban lesznek a szabalyzo fobb elemei: hajo modell, PID szabalyzok, th
 import math
 import pidcont
 
-# hajo fizikai modell. le van egyszerusitve, nincs hatvanyozas a csillapitasban, csak a viszszintes mozgast szamolja
+# hajo fizikai modell, ezt használja a szabályzó.
+# le van egyszerusitve, nincs hatvanyozas a csillapitasban, csak a viszszintes mozgast szamolja
 class modell:
     # sebesseg x, y, szogsebesseg
     V = [0.0, 0.0, 0.0]
@@ -28,6 +29,8 @@ class modell:
         self.farF = dict["farF"] #farsugar max ereje, [N]
         self.motL = dict['motL'] #motorok tavolsaga egymastol
         self.motF = dict['motF'] #motorok toloereje, allo helyzetben
+        # időállandó a GPS és a modell adatainak összemixeléséhez
+        self.taufilt = dict['tauFilt']
 
     # ez szamolja az eroket az aktuatorok erejebol, aztan a hajo fizikai modelljet.
     # ezt meg osszerakja az INS-bol kapott adatokkal. A szogsebesseget az ISN-tol veszi, a tobbit szamolja.
@@ -35,7 +38,7 @@ class modell:
     # a V a sebesseg vektor, amit az INS-tol kap
     # kimenet a szamitott sebessegek, a szabalyzohoz
     def process(self, dt, Ak, V):
-        l = dt * 0.25 # egyelore ez a szuresi idoallando
+        l = dt / self.taufilt
         # erok szamitasa az aktuatorok vezerlo jelei alapjan
         F = [0.0, 0.0]
         F[0] = (Ak[2]+Ak[3])*self.motF # jobb motor + bal motor
@@ -75,6 +78,9 @@ class modell:
 
 class PIDcontroller:
     def __init__(self, dict) -> None:
+        self.speedX = dict['speedX']
+        self.speedY = dict['speedY']
+        self.speedZ = dict['speedZ']
         # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez a frekvencia kb az aktuator idoallandojaval egyezik meg (1/2pi...)
         tau = dict['tauM']
         p = dict['M'][0] / (dict['motF']*2 * tau)
@@ -98,9 +104,9 @@ class PIDcontroller:
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg
     def process(self, dt, V, J):
-        M = self.zpid.process((J[2]*0.4 - V[2]), dt)
-        Job = self.ypid.process((J[1]*0.15 - V[1]), dt)
-        Elo = self.xpid.process((J[0]*0.3 - V[0]), dt)
+        Elo = self.xpid.process((J[0]*self.speedX - V[0]), dt)
+        Job = self.ypid.process((J[1]*self.speedY - V[1]), dt)
+        M = self.zpid.process((J[2]*self.speedZ - V[2]), dt)
         # Erok szetosztasa
         # orrsugar, farsugar, jobb motor, bal motor
         return [Job+M, Job-M, Elo+M, Elo-M]

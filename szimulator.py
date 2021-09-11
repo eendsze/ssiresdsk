@@ -33,7 +33,7 @@ Hajomodell1 = {
 }
 Hajomodell1Becs = {
     "M": [2.0, 4.4, 0.04],
-    "D": [0.3, 3, 0.04],
+    "D": [1, 3, 0.04],
     "length": 0.4,
     'offset': 0, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 100,
@@ -44,7 +44,12 @@ Hajomodell1Becs = {
     'motL': 0.1, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
     'tauT': 0.1, # thrusterek idoallandoja, kb.
-    'tauM': 0.1 # motorok idoallandoja
+    'tauM': 0.1, # motorok idoallandoja
+    'tauFilt': 2, # a modell es a GPS mix idoallandoja
+    # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
+    'speedX': 0.3,
+    'speedY': 0.15,
+    'speedZ': 0.5
 }
 
 #Nagy hajo modellje
@@ -66,8 +71,8 @@ Hajomodell2 = {
     'tauM': 0.1 # motorok idoallandoja
 }
 Hajomodell2Becs = {
-    "M": [10, 18, 0.2],
-    "D": [2.2, 30, 2],
+    "M": [12, 18, 0.3],
+    "D": [1, 5, 1.5],
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
@@ -78,7 +83,12 @@ Hajomodell2Becs = {
     'motL': 0.22, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
     'tauT': 0.1, # thrusterek idoallandoja, kb.
-    'tauM': 0.1 # motorok idoallandoja
+    'tauM': 0.1, # motorok idoallandoja
+    'tauFilt': 2, # a modell es a GPS mix idoallandoja
+    # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
+    'speedX': 0.3,
+    'speedY': 0.15,
+    'speedZ': 0.3
 }
 
 
@@ -103,7 +113,7 @@ Nagyhajo445_modell = {
 }
 
 Nagyhajo445_becsles = {
-    "M": [15000, 20000, 200000],
+    "M": [10000, 20000, 200000],
     "D": [200, 2000, 200000],
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,
@@ -112,7 +122,12 @@ Nagyhajo445_becsles = {
     'motL': 2.2, # propellerek tavolsaga egymastol
     'motF': 2000, #ez 200%-os is lehet egyelore
     'tauT': 0.8, # thrusterek idoallandoja, kb.
-    'tauM': 0.8 # motorok idoallandoja
+    'tauM': 0.8, # motorok idoallandoja
+    'tauFilt': 4, # a modell es a GPS mix idoallandoja
+    # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
+    'speedX': 1,
+    'speedY': 0.5,
+    'speedZ': 0.1
 }
 
 
@@ -162,15 +177,16 @@ def main():
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
 
         # *** itt van a szimulacio ***
-        # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. Ez az aktuatorok idobeni viselkedeset modellezi
-        # TODO ebbe kene tenni az ero szamitast is, most csak idoallandot szamit
+        # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. 
+        # Ez az aktuatorok idobeni viselkedeset modellezi
+        # Itt ezt hasznalja a valso modell is, a valosagban a mert aramjeleket fogja hasznalni.
         AkForces = aktuators.process(dt, Akt)
         # Ez az adatot kapja a hajo szimulator, ami alapjan a rajzolas is megy
-        # TODO ez nem jo, a valos es a szimulator modell is ugyanazt a szamitott aktuator erot kapja...
         V = valosModell.calcForces(dt, AkForces)
         # A szimulatorbol a hajo sebessege bemegy az INS-t szimulalo egysegbe
         Vins = INS.process(dt, V)
-        # Az aktuatorok jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. Itt lenne a sensor fusion
+        # Az aktuatorok (elvileg mert) jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
+        # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
         Vmod = modell.process(dt, AkForces, Vins) 
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)

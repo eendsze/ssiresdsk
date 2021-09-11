@@ -45,10 +45,10 @@ class HajoObject:
         self.hajoVect = list(map(lambda x: pg.math.Vector2(x)*self.ship_scale+(self.hajoOffset, 0), self.hajoPoly))
         self.font = pg.font.Font(None, 24)
         #meghajtas kijelzeshez vektorok
-        self.thrustVects[0] = [(dict['orrL'], 0), (0, -dict['orrF']/1000)] #orrsugar helye, iranya
-        self.thrustVects[1] = [(-dict['farL'], 0), (0, -dict['farF']/1000)] #farsugar helye, iranya
-        self.thrustVects[2] = [(self.hajoVect[3][0], dict['motL']/-2), (-dict['motF']/1000, 0)] #jobb motor 
-        self.thrustVects[3] = [(self.hajoVect[3][0], dict['motL']/2), (-dict['motF']/1000, 0)] #bal motor helye
+        self.thrustVects[0] = [(dict['orrL'], 0), (0, -1)] #orrsugar helye, iranya
+        self.thrustVects[1] = [(-dict['farL'], 0), (0, -1)] #farsugar helye, iranya
+        self.thrustVects[2] = [(self.hajoVect[3][0], dict['motL']/-2), (-1, 0)] #jobb motor 
+        self.thrustVects[3] = [(self.hajoVect[3][0], dict['motL']/2), (-1, 0)] #bal motor helye
 
     def draw(self, color=WHITE):
         #elozo torlese
@@ -59,7 +59,7 @@ class HajoObject:
             # uj vektorok szamitasa
             #vektor talppontja
             tol = (pg.math.Vector2(self.thrustVects[x][0]).rotate_rad(self.rotation) + self.position)*self.scr_scale
-            ig  = tol + (pg.math.Vector2(self.thrustVects[x][1]).rotate_rad(self.rotation))*self.scr_scale * self.Thrust[x]
+            ig  = tol + (pg.math.Vector2(self.thrustVects[x][1]).rotate_rad(self.rotation)) * self.scr_scale*self.Thrust[x]*self.ship_scale/5
             #flippelni, kozepre tenni
             self.lastThVec[x][0] = (tol.x + self.midscreen.x, self.midscreen.y - tol.y)
             self.lastThVec[x][1] = (ig.x + self.midscreen.x, self.midscreen.y - ig.y)
