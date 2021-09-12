@@ -81,23 +81,25 @@ class PIDcontroller:
         self.speedX = dict['speedX']
         self.speedY = dict['speedY']
         self.speedZ = dict['speedZ']
-        # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez a frekvencia kb az aktuator idoallandojaval egyezik meg (1/2pi...)
+
+        # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez elvileg a tomegtol es az erositestol fugg. 
+        # az erosites meg a motorok erejetol. Tehat a P tag a tomegtol es az akt. erejetol fugg, a szorzo tenyezo emirikus.
         tau = dict['tauM']
-        p = dict['M'][0] / (dict['motF']*2 * tau)
+        p = dict['M'][0] / dict['motF'] / dict['tauSzab']
         i = p*dict['D'][0]/dict['M'][0]
         d = p*tau
         self.xpid = pidcont.PIDclass(p, i, d)
 
         tau = dict['tauT']
-        p = dict['M'][1] / ((dict['orrF'] + dict['farF']) * tau)
+        p = dict['M'][1] / (dict['orrF'] + dict['farF']) / dict['tauSzab']
         i = p*dict['D'][1]/dict['M'][1]
         d = p*tau
         self.ypid = pidcont.PIDclass(p, i, d)
 
         tau = max(dict['tauT'], dict['tauM'])
         # az Mi a motorok nyomatek kepzese, fugg a nyomatek elosztastol is
-        Mi = 0.5 * dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
-        p = dict['M'][2] / (Mi * tau)
+        Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
+        p = dict['M'][2] / Mi / dict['tauSzab']
         i = p*dict['D'][2]/dict['M'][2]
         d = p*tau
         self.zpid = pidcont.PIDclass(p, i, d)

@@ -46,6 +46,7 @@ Hajomodell1Becs = {
     'tauT': 0.1, # thrusterek idoallandoja, kb.
     'tauM': 0.1, # motorok idoallandoja
     'tauFilt': 2, # a modell es a GPS mix idoallandoja
+    'tauSzab': 0.3, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.3,
     'speedY': 0.15,
@@ -54,8 +55,8 @@ Hajomodell1Becs = {
 
 #Nagy hajo modellje
 Hajomodell2 = {
-    "M": [12.6, 20, 0.17],
-    "D": [2, 20, 1],
+    "M": [12.6, 20, 1.7],
+    "D": [2, 20, 0.1],
     "Af": [1.7, 1.8, 1.6],
     'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz
     "length": 1.4,
@@ -71,8 +72,8 @@ Hajomodell2 = {
     'tauM': 0.1 # motorok idoallandoja
 }
 Hajomodell2Becs = {
-    "M": [12, 18, 0.3],
-    "D": [1, 5, 1.5],
+    "M": [12, 18, 1.7],
+    "D": [1, 5, 0.1],
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
@@ -85,6 +86,7 @@ Hajomodell2Becs = {
     'tauT': 0.1, # thrusterek idoallandoja, kb.
     'tauM': 0.1, # motorok idoallandoja
     'tauFilt': 2, # a modell es a GPS mix idoallandoja
+    'tauSzab': 0.3, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.3,
     'speedY': 0.15,
@@ -124,6 +126,7 @@ Nagyhajo445_becsles = {
     'tauT': 0.8, # thrusterek idoallandoja, kb.
     'tauM': 0.8, # motorok idoallandoja
     'tauFilt': 4, # a modell es a GPS mix idoallandoja
+    'tauSzab': 1, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 1,
     'speedY': 0.5,
@@ -149,15 +152,16 @@ KornyezetCsendes = {
 #ez egy komment
 def main():
     pg.init()
-    #dict = Nagyhajo445_modell
-    #becsultDict = Nagyhajo445_becsles
-    dict = Hajomodell2
-    becsultDict = Hajomodell2Becs
+    dict = Nagyhajo445_modell
+    becsultDict = Nagyhajo445_becsles
+    #dict = Hajomodell2
+    #becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, dict)
     joy = joystick.myJoystic()
     valosModell = fizikaimodell.physicalShip(dict)
+    #valosModell.setEnvironment(Kornyezet1)
     valosModell.setEnvironment(KornyezetCsendes)
     AkForces = [0.0, 0.0, 0.0, 0.0]
     aktuators = szimulaltelemek.akutatorSim(dict)
@@ -175,14 +179,13 @@ def main():
  
         J = joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
-
         # *** itt van a szimulacio ***
         # Az elozoleg meghatarozott akutator jeleket atadja az aktuator vezerlonek. 
         # Ez az aktuatorok idobeni viselkedeset modellezi
         # Itt ezt hasznalja a valso modell is, a valosagban a mert aramjeleket fogja hasznalni.
         AkForces = aktuators.process(dt, Akt)
         # Ez az adatot kapja a hajo szimulator, ami alapjan a rajzolas is megy
-        V = valosModell.calcForces(dt, AkForces)
+        V = valosModell.calcForces(dt, Akt)
         # A szimulatorbol a hajo sebessege bemegy az INS-t szimulalo egysegbe
         Vins = INS.process(dt, V)
         # Az aktuatorok (elvileg mert) jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 

@@ -51,7 +51,7 @@ class physicalShip:
         self.motF = dict['motF'] #motorok toloereje, allo helyzetben
 
     #bemenet a dt, es az ero vektor
-    def calculate(self, dt, F = [0.0, 0.0, 0.0]):
+    def calculate(self, dt, F):
         # integralas
         # kozbenso sebesseg az integralashoz, ezzel szamol
         Vk = list(map(lambda v, a: v + a/2 * dt, self.V, self.A))

@@ -19,7 +19,7 @@ class PIDclass:
         Dterm = (err - self.lastErr) / dt
         self.lastErr = err
         # kimenet szamitasa, D tag nelkul, hogy az ne limitalja az integralast
-        output = self.pt*Pterm + self.it*self.Iterm
+        output = Pterm + self.it*self.Iterm
         # integralas, anti windup
         if not((output > 1.0 and err > 0) or (output < -1.0 and err < 0)):
             self.Iterm += err * dt
