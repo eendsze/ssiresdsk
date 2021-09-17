@@ -64,7 +64,7 @@ Hajomodell2 = {
     "zoom": 200,
     'orrL': 0.5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 0.95,
-    'farL': 0.5,
+    'farL': 0.3,
     'farF': 0.95,
     'motL': 0.22, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
@@ -79,7 +79,7 @@ Hajomodell2Becs = {
     "zoom": 200,
     'orrL': 0.5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 0.95,
-    'farL': 0.5,
+    'farL': 0.3,
     'farF': 0.95,
     'motL': 0.22, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
@@ -106,23 +106,23 @@ Nagyhajo445_modell = {
     "zoom": 25,
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,
-    'farL': 5,
+    'farL': 3,
     'farF': 950,
     'motL': 2.2, # propellerek tavolsaga egymastol
-    'motF': 2000, #ez 200%-os is lehet egyelore
+    'motF': 1500, #ez 200%-os is lehet, max az ero felet szabad megadni
     'tauT': 0.5, # thrusterek idoallandoja, kb.
     'tauM': 0.5 # motorok idoallandoja
 }
 
 Nagyhajo445_becsles = {
-    "M": [10000, 20000, 200000],
+    "M": [12000, 20000, 200000],
     "D": [200, 2000, 200000],
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,
-    'farL': 5,
+    'farL': 3,
     'farF': 950,
     'motL': 2.2, # propellerek tavolsaga egymastol
-    'motF': 2000, #ez 200%-os is lehet egyelore
+    'motF': 1500, #ez 200%-os is lehet, max az ero felet szabad megadni
     'tauT': 0.8, # thrusterek idoallandoja, kb.
     'tauM': 0.8, # motorok idoallandoja
     'tauFilt': 4, # a modell es a GPS mix idoallandoja
@@ -152,10 +152,10 @@ KornyezetCsendes = {
 #ez egy komment
 def main():
     pg.init()
-    dict = Nagyhajo445_modell
-    becsultDict = Nagyhajo445_becsles
-    #dict = Hajomodell2
-    #becsultDict = Hajomodell2Becs
+    #dict = Nagyhajo445_modell
+    #becsultDict = Nagyhajo445_becsles
+    dict = Hajomodell2
+    becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, dict)

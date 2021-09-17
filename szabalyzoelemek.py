@@ -81,6 +81,12 @@ class PIDcontroller:
         self.speedX = dict['speedX']
         self.speedY = dict['speedY']
         self.speedZ = dict['speedZ']
+        self.orrL = dict['orrL']
+        self.farL = dict['farL']
+        self.motL = dict['motL']
+        self.orrF = dict['orrF']
+        self.farF = dict['farF']
+        self.motF = dict['motF']
 
         # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez elvileg a tomegtol es az erositestol fugg. 
         # az erosites meg a motorok erejetol. Tehat a P tag a tomegtol es az akt. erejetol fugg, a szorzo tenyezo emirikus.
@@ -97,9 +103,9 @@ class PIDcontroller:
         self.ypid = pidcont.PIDclass(p, i, d)
 
         tau = max(dict['tauT'], dict['tauM'])
-        # az Mi a motorok nyomatek kepzese, fugg a nyomatek elosztastol is
-        Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
-        p = dict['M'][2] / Mi / dict['tauSzab']
+        # az Mi a motorok nyomatek kepzese, fugg a nyomatek elosztastol is.Most az egyszeru eset van.
+        self.Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
+        p = dict['M'][2] / self.Mi / dict['tauSzab']
         i = p*dict['D'][2]/dict['M'][2]
         d = p*tau
         self.zpid = pidcont.PIDclass(p, i, d)
@@ -110,5 +116,37 @@ class PIDcontroller:
         Job = self.ypid.process((J[1]*self.speedY - V[1]), dt)
         M = self.zpid.process((J[2]*self.speedZ - V[2]), dt)
         # Erok szetosztasa
+        # 1: erok kiosztas az aktuatorokra. Figyelembe kell venni a keletkezo nyomatekokat
+        # az x irany egyszeru
+        jobbMot = Elo
+        balMot = Elo
+        # az y irany is egyszeru, de ellenorizni kell, hogy a keletkezo nyomatekot a fomotorok tudjak-e kompenzalni?
+        orrsugar = Job
+        farsugar = Job
+        # a keletkezo nyomatek:
+        m2 = orrsugar * self.orrL * self.orrF - farsugar * self.farL * self.farF
+        # ezt levonjuk motorokbol
+        comp = m2 / self.motF / self.motL
+        jobbMot -= comp
+        balMot += comp
+        # a forgato komponens hozzaadasa
+        jobbMot += M
+        balMot -= M
+        orrsugar += M
+        farsugar -= M
+        # 2: limitalas aktuatoronkent. A motorok 200%-ra vannak limitalva
+        jobbMot =  max(min(2.0, jobbMot), -2.0)
+        balMot =  max(min(2.0, balMot), -2.0)
+        orrsugar =  max(min(1.0, orrsugar), -1.0)
+        farsugar =  max(min(1.0, farsugar), -1.0)
+        # 3: kiszamitjuk hogy az elo, job, M tagok hany%-a ervenyesult, es ezt visszacsatoljuk a szabalyzokba.
+        eloFb = jobbMot + balMot
+        jobbFb = orrsugar + farsugar
+        MFb = (orrsugar * self.orrF * self.orrL - farsugar * self.farF * self.farL + (jobbMot-balMot)/2 * self.motF * self.motL) / self.Mi
+        self.xpid.postProcess(eloFb)
+        self.ypid.postProcess(jobbFb)
+        self.zpid.postProcess(MFb)
         # orrsugar, farsugar, jobb motor, bal motor
-        return [Job+M, Job-M, Elo+M, Elo-M]
+        return [orrsugar, farsugar, jobbMot, balMot]
+
+        #az MFb szamitasa hibas
