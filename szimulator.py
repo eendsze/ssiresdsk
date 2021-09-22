@@ -185,7 +185,7 @@ def main():
         # Itt ezt hasznalja a valso modell is, a valosagban a mert aramjeleket fogja hasznalni.
         AkForces = aktuators.process(dt, Akt)
         # Ez az adatot kapja a hajo szimulator, ami alapjan a rajzolas is megy
-        V = valosModell.calcForces(dt, Akt)
+        V = valosModell.calcForces(dt, AkForces)
         # A szimulatorbol a hajo sebessege bemegy az INS-t szimulalo egysegbe
         Vins = INS.process(dt, V)
         # Az aktuatorok (elvileg mert) jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
@@ -197,7 +197,8 @@ def main():
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)
         hajo.setspeed(V)
-        hajo.setThrust(AkForces)
+        #hajo.setThrust(AkForces)
+        hajo.setThrust(Akt)
         if joy.getReset():
             hajo.resetPos()
         hajo.draw()

@@ -140,8 +140,8 @@ class PIDcontroller:
         orrsugar =  max(min(1.0, orrsugar), -1.0)
         farsugar =  max(min(1.0, farsugar), -1.0)
         # 3: kiszamitjuk hogy az elo, job, M tagok hany%-a ervenyesult, es ezt visszacsatoljuk a szabalyzokba.
-        eloFb = jobbMot + balMot
-        jobbFb = orrsugar + farsugar
+        eloFb = (jobbMot + balMot) / 2
+        jobbFb = (orrsugar + farsugar) / 2
         MFb = (orrsugar * self.orrF * self.orrL - farsugar * self.farF * self.farL + (jobbMot-balMot)/2 * self.motF * self.motL) / self.Mi
         self.xpid.postProcess(eloFb)
         self.ypid.postProcess(jobbFb)

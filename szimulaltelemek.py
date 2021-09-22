@@ -20,7 +20,7 @@ class insSim:
     def process(self, dt, V):
         # merem az idot, masodpercenkent 4x jon gps adat
         self.time += dt
-        r = 0.05
+        r = 0.15
         # 1/4-ed sec-enkent jon ujabb minta, akkor ugrik a hiba
         if self.time > 0.25:
             self.time -= 0.25
@@ -36,8 +36,21 @@ class akutatorSim:
     def __init__(self, dict) -> None:
         self.tau = [dict['tauT'], dict['tauT'], dict['tauM'], dict['tauM']]
 
+    def lim(self, x):
+        k = 0.3
+        if((x < k/2) and (x > -k/2)):
+            return 0
+        if((x < k) and (x > -k)):
+            if(k < 0):
+                return -k
+            else:
+                return k
+        return x
+
     # Ak: orrsugar, farsugar, jobb motor, bal motor
     def process(self, dt, Ak):
+        #akx = map(lambda x: self.lim(x), Ak)
+        #self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, akx, self.tau))
         self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, Ak, self.tau))
         return self.AkForces
 
