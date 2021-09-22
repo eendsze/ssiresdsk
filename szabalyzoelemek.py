@@ -93,13 +93,13 @@ class PIDcontroller:
         tau = dict['tauM']
         p = dict['M'][0] / dict['motF'] / dict['tauSzab']
         i = p*dict['D'][0]/dict['M'][0]
-        d = p*tau
+        d = p*tau *0
         self.xpid = pidcont.PIDclass(p, i, d)
 
         tau = dict['tauT']
         p = dict['M'][1] / (dict['orrF'] + dict['farF']) / dict['tauSzab']
         i = p*dict['D'][1]/dict['M'][1]
-        d = p*tau
+        d = p*tau *0
         self.ypid = pidcont.PIDclass(p, i, d)
 
         tau = max(dict['tauT'], dict['tauM'])
@@ -107,7 +107,7 @@ class PIDcontroller:
         self.Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
         p = dict['M'][2] / self.Mi / dict['tauSzab']
         i = p*dict['D'][2]/dict['M'][2]
-        d = p*tau
+        d = p*tau *0
         self.zpid = pidcont.PIDclass(p, i, d)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg

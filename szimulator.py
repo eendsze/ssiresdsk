@@ -190,15 +190,17 @@ def main():
         Vins = INS.process(dt, V)
         # Az aktuatorok (elvileg mert) jele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
-        Vmod = modell.process(dt, AkForces, Vins) 
+        #Vmod = modell.process(dt, AkForces, Vins)
+        # *** most a modell a nyers Akt-ot kapja, ami a szabalyzas kimenete.
+        Vmod = modell.process(dt, Akt, Vins)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
 
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)
         hajo.setspeed(V)
-        #hajo.setThrust(AkForces)
-        hajo.setThrust(Akt)
+        hajo.setThrust(AkForces)
+        #hajo.setThrust(Akt)
         if joy.getReset():
             hajo.resetPos()
         hajo.draw()

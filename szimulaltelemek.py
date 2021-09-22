@@ -36,21 +36,23 @@ class akutatorSim:
     def __init__(self, dict) -> None:
         self.tau = [dict['tauT'], dict['tauT'], dict['tauM'], dict['tauM']]
 
-    def lim(self, x):
-        k = 0.3
-        if((x < k/2) and (x > -k/2)):
-            return 0
-        if((x < k) and (x > -k)):
-            if(k < 0):
-                return -k
+    def lim(self, inp):
+        k = 0.25
+        kfel = k/2
+        x = abs(inp)
+        if(x < kfel):
+            res = 0
+        else:
+            if(x < k):
+                res = k
             else:
-                return k
-        return x
+                res = x
+        return(math.copysign(res, inp))
 
     # Ak: orrsugar, farsugar, jobb motor, bal motor
     def process(self, dt, Ak):
-        #akx = map(lambda x: self.lim(x), Ak)
-        #self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, akx, self.tau))
-        self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, Ak, self.tau))
+        akx = map(lambda x: self.lim(x), Ak)
+        self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, akx, self.tau))
+        #self.AkForces = list(map(lambda x,y, tau: x + (y-x)/tau*dt, self.AkForces, Ak, self.tau))
         return self.AkForces
 
