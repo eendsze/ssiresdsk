@@ -20,7 +20,7 @@ class insSim:
     def process(self, dt, V):
         # merem az idot, masodpercenkent 4x jon gps adat
         self.time += dt
-        r = 0.15
+        r = 0.05
         # 1/4-ed sec-enkent jon ujabb minta, akkor ugrik a hiba
         if self.time > 0.25:
             self.time -= 0.25
