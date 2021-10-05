@@ -124,7 +124,8 @@ class PIDcontroller:
         self.Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
         p = dict['M'][2] / self.Mi / dict['tauSzab']
         i = p*dict['D'][2]/dict['M'][2]
-        d = p*tau *0
+        # ide kell a D tag, mert ez nem a modellre szabalyoz.
+        d = p*tau
         self.zpid = pidcont.PIDclass(p, i, d)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg

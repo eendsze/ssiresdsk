@@ -49,11 +49,11 @@ Hajomodell2 = {
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
-    'orrL': 0.5, #orrkormany tavolsaga a hajo forgaspontjatol
+    'orrL': 0.43, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 0.95,
-    'farL': 0.3,
+    'farL': 0.265,
     'farF': 0.95,
-    'motL': 0.22, # propellerek tavolsaga egymastol
+    'motL': 0.18, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
     'tauT': 0.1, # thrusterek idoallandoja, kb.
     'tauM': 0.1 # motorok idoallandoja
@@ -64,11 +64,11 @@ Hajomodell2Becs = {
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
-    'orrL': 0.5, #orrkormany tavolsaga a hajo forgaspontjatol
+    'orrL': 0.43, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 0.95,
-    'farL': 0.3,
+    'farL': 0.265,
     'farF': 0.95,
-    'motL': 0.22, # propellerek tavolsaga egymastol
+    'motL': 0.12, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore
     'tauT': 0.1, # thrusterek idoallandoja, kb.
     'tauM': 0.1, # motorok idoallandoja
