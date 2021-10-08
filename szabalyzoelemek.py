@@ -4,6 +4,23 @@ Ebben a fileban lesznek a szabalyzo fobb elemei: hajo modell, PID szabalyzok, th
 import math
 import pidcont
 
+# aktuator jelformalas. Egyelore egy egyszeru limietes fuggveny
+def actForm(inp):
+    # a k itt be van betonozva. Ez monjda meg, hogy mekkora az aktuatorok minimalis
+    # vezerlo jele %-ban
+    k = 0.25
+
+    x = abs(inp)
+    if(x < k/2):
+        res = 0
+    else:
+        if(x < k):
+            res = k
+        else:
+            res = x
+    return(math.copysign(res, inp))
+
+
 # hajo fizikai modell, ezt használja a szabályzó.
 # le van egyszerusitve, nincs hatvanyozas a csillapitasban, csak a viszszintes mozgast szamolja
 class modell:
@@ -107,7 +124,8 @@ class PIDcontroller:
         self.Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
         p = dict['M'][2] / self.Mi / dict['tauSzab']
         i = p*dict['D'][2]/dict['M'][2]
-        d = p*tau *0
+        # ide kell a D tag, mert ez nem a modellre szabalyoz.
+        d = p*tau
         self.zpid = pidcont.PIDclass(p, i, d)
     
     # input: V sebesseg vektor, J joystick: elore, jobbra, forg
