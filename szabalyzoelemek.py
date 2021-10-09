@@ -87,8 +87,8 @@ class modell:
             self.V[i] = self.Vszurt[i] + self.Vmsz[i]
 
         #print(f'Vx {self.V[0]:03.2f} Vxins {V[0]:03.2f}, Vy {self.V[1]:03.2f}, Vyins {V[1]:03.2f} Vax {self.Va[0]:03.2f}, Vay {self.Va[1]:3.2f}  \r', end='', flush=True)
-        print(f'Vx {self.V[0]:+03.3f} Vxins {V[0]:+03.2f} Vszx {self.Vszurt[0]:+03.2f} Ax {A[0]:+03.4f} Cvszx {self.CVsz[0]:+03.4f} Vmodx {self.Vmod[0]:+03.3f} Vmszx {self.Vmsz[0]:+03.3f} | ', end='')
-        print(f'Vy {self.V[1]:+03.3f} Vyins {V[1]:+03.2f} Vszy {self.Vszurt[1]:+03.2f} Ay {A[1]:+03.4f} Cvszy {self.CVsz[1]:+03.4f} Vmody {self.Vmod[1]:+03.3f} Vmszy {self.Vmsz[1]:+03.3f} \r', end='', flush=True)
+        #print(f'Vx {self.V[0]:+03.3f} Vxins {V[0]:+03.2f} Vszx {self.Vszurt[0]:+03.2f} Ax {A[0]:+03.4f} Cvszx {self.CVsz[0]:+03.4f} Vmodx {self.Vmod[0]:+03.3f} Vmszx {self.Vmsz[0]:+03.3f} | ', end='')
+        #print(f'Vy {self.V[1]:+03.3f} Vyins {V[1]:+03.2f} Vszy {self.Vszurt[1]:+03.2f} Ay {A[1]:+03.4f} Cvszy {self.CVsz[1]:+03.4f} Vmody {self.Vmod[1]:+03.3f} Vmszy {self.Vmsz[1]:+03.3f} \r', end='', flush=True)
 
         # eredmeny a sebesseg vektor
         return self.V

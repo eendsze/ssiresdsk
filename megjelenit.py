@@ -14,10 +14,10 @@ class disp:
         sys.stdout.write(u"\u001b[" + str(self.rows) + "A") # Move up
         #elso sor actuator fesz orrsugar, farsugar, jobb motor, bal motor
         print(f'Actuator fesz: Uorr {self.actVoltages[0]:+02.2f} Ufar {self.actVoltages[1]:+02.2f} \
-            Ujobb {self.actVoltages[2]:+02.2f} Ubal {self.actVoltages[3]:+02.2f}')
+Ujobb {self.actVoltages[2]:+02.2f} Ubal {self.actVoltages[3]:+02.2f}')
         #masodik sor aramok
         print(f'Actuator aram: Iorr {self.actCurrents[0]:+02.2f} Ifar {self.actCurrents[1]:+02.2f} \
-            Ijobb {self.actCurrents[2]:+02.2f} Ibal {self.actCurrents[3]:+02.2f}')
+Ijobb {self.actCurrents[2]:+02.2f} Ibal {self.actCurrents[3]:+02.2f}')
         #tobbi
         print("-")
         print("-")
