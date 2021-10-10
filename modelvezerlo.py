@@ -1,5 +1,5 @@
 import os
-import math
+#import math
 import pygame as pg
 import joystick
 import szabalyzoelemek
@@ -66,7 +66,9 @@ def main():
         AktFormed = list(map(lambda x, v: szabalyzoelemek.actForm(x) * v, Akt, Voltages))
 
         # ezt el is kell kuldeni a motoroknak
-        command = f"start {int(AktFormed[0]*1000)} {int(AktFormed[1]*1000)}  {int(AktFormed[2]*1000)}  {int(AktFormed[3]*1000)}  end \n"
+        #command = f"start {int(AktFormed[0]*1000)} {int(AktFormed[1]*1000)}  {int(AktFormed[2]*1000)}  {int(AktFormed[3]*1000)}  end \n"
+        x = 1000
+        command = f"start {x} {x*2} {x*3} {x*4} end \n"
         ser.write(command.encode())
         # be isolvasom az aramot, ha van mit
         try:
