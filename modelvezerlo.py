@@ -13,7 +13,8 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def main():
     try:
-        ser = serial.Serial("/dev/ttyACM0", 115200)
+        #ser = serial.Serial("/dev/ttyACM0", 115200)
+        ser = serial.Serial("com22", 115200)
     except Exception as e:
         print(str(e))
         exit()
@@ -44,6 +45,12 @@ def main():
     Voltages = [6.0, 6.0, 3.0, 3.0]
     AktFormed = Akt
 
+    #ellenallas kalibracio kuldese
+    #10 = 1 mOhm
+    command = f"res 8000 8000 3500 3000 end \n"
+    ser.write(command.encode())
+
+
     while 1:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -67,8 +74,8 @@ def main():
 
         # ezt el is kell kuldeni a motoroknak
         #command = f"start {int(AktFormed[0]*1000)} {int(AktFormed[1]*1000)}  {int(AktFormed[2]*1000)}  {int(AktFormed[3]*1000)}  end \n"
-        x = 1000
-        command = f"start {x} {x*2} {x*3} {x*4} end \n"
+        x = 800
+        command = f"start {x} {x} {x} {x} end \n"
         ser.write(command.encode())
         # be isolvasom az aramot, ha van mit
         try:
@@ -76,6 +83,7 @@ def main():
             pwmDict = json.loads(res)
             curr =[pwmDict['I1'], pwmDict['I2'], pwmDict['I3'], pwmDict['I4']]
             megj.setActCurr(curr)
+            megj.setBattV(pwmDict['Ubat'])
         except:
             pass
 

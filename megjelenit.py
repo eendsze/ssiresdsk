@@ -4,6 +4,7 @@ import math
 class disp:
     actVoltages = [0.0] * 4
     actCurrents = [0.0] * 4
+    battVolt = 0.0
     rows = 4
 
     def __init__(self) -> None:
@@ -17,7 +18,7 @@ class disp:
 Ujobb {self.actVoltages[2]:+02.2f} Ubal {self.actVoltages[3]:+02.2f}')
         #masodik sor aramok
         print(f'Actuator aram: Iorr {self.actCurrents[0]:+02.2f} Ifar {self.actCurrents[1]:+02.2f} \
-Ijobb {self.actCurrents[2]:+02.2f} Ibal {self.actCurrents[3]:+02.2f}')
+Ijobb {self.actCurrents[2]:+02.2f} Ibal {self.actCurrents[3]:+02.2f}. Batt V: {self.battVolt:+02.2f}')
         #tobbi
         print("-")
         print("-")
@@ -27,4 +28,7 @@ Ijobb {self.actCurrents[2]:+02.2f} Ibal {self.actCurrents[3]:+02.2f}')
 
     def setActCurr(self, v):
         self.actCurrents = v
+
+    def setBattV(self, v):
+        self.battVolt = v
 
