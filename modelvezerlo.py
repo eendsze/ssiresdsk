@@ -33,8 +33,7 @@ def main():
     pg.init()
     becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
- #   screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
-    joy = joystick.myJoystic()
+    joy = joystick.remoteJoystick()
     megj = megjelenit.disp()
     modell = szabalyzoelemek.modell(becsultDict)
     PID = szabalyzoelemek.PIDcontroller(becsultDict)
@@ -52,12 +51,6 @@ def main():
 
 
     while 1:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                return
-            if event.type == pg.JOYBUTTONDOWN:
-                joy.readOffset()
- 
         J = joy.read()
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
         # *** itt van a szimulacio ***
@@ -90,8 +83,7 @@ def main():
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         megj.setActVolt(AktFormed)
         megj.show()
-        # Ez is megjelenites
-#        pg.display.update()
+
         clock.tick(fps)
 
 if __name__ == "__main__":

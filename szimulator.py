@@ -25,7 +25,7 @@ def main():
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, dict)
-    joy = joystick.myJoystic()
+    joy = joystick.myJoystic(dt)
     megj = megjelenit.disp()
     valosModell = fizikaimodell.physicalShip(dict)
     valosModell.setEnvironment(Kornyezet1)
