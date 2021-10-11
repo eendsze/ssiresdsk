@@ -29,7 +29,7 @@ class remoteJoystick:
         b = socket.inet_aton(gwadd)
         self.badd = f'{b[0]}.{b[1]}.{b[2]}.255'
         self.bss.bind(('0.0.0.0', self.recPort))
-        self.J[0.0, 0.0, 0.0]
+        self.J = [0.0, 0.0, 0.0]
         self.timeout = 0.0
 
     def read(self):

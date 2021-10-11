@@ -1,9 +1,7 @@
 import os
-#import math
 import pygame as pg
 import joystick
 import szabalyzoelemek
-import megjelenit
 import serial, json
 from modellek import *
 
@@ -13,8 +11,8 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def main():
     try:
-        #ser = serial.Serial("/dev/ttyACM0", 115200)
-        ser = serial.Serial("com22", 115200)
+        ser = serial.Serial("/dev/ttyACM0", 115200)
+        #ser = serial.Serial("com22", 115200)
     except Exception as e:
         print(str(e))
         exit()
@@ -33,8 +31,7 @@ def main():
     pg.init()
     becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
-    joy = joystick.remoteJoystick()
-    megj = megjelenit.disp()
+    joy = joystick.remoteJoystick(dt)
     modell = szabalyzoelemek.modell(becsultDict)
     PID = szabalyzoelemek.PIDcontroller(becsultDict)
     Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
@@ -43,7 +40,7 @@ def main():
     # AKTUATOR 100%-HOZ TARTOZO FESZULTSEGEK orrsugar, farsugar, jobb motor, bal motor
     Voltages = [6.0, 6.0, 3.0, 3.0]
     AktFormed = Akt
-
+    pwmDict = {}
     #ellenallas kalibracio kuldese
     #10 = 1 mOhm
     command = f"res 8000 8000 3500 3000 end \n"
@@ -73,16 +70,12 @@ def main():
         # be isolvasom az aramot, ha van mit
         try:
             res = ser.readline()
-            pwmDict = json.loads(res)
-            curr =[pwmDict['I1'], pwmDict['I2'], pwmDict['I3'], pwmDict['I4']]
-            megj.setActCurr(curr)
-            megj.setBattV(pwmDict['Ubat'])
+            motCurr = json.loads(res)
         except:
             pass
 
-        # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
-        megj.setActVolt(AktFormed)
-        megj.show()
+        joy.write(['Aramok: ' + json.dumps(motCurr), 'Akt. inp: ' + json.dumps(AktFormed), 'ez is'])
+
 
         clock.tick(fps)
 
