@@ -1,4 +1,4 @@
-import os
+import os, time
 import pygame as pg
 import joystick
 import szabalyzoelemek
@@ -41,11 +41,13 @@ def main():
     Voltages = [6.0, 6.0, 3.0, 3.0]
     AktFormed = Akt
     pwmDict = {}
-    #ellenallas kalibracio kuldese
+    #ellenallas kalibracio kuldese. orrsugar, farsugar, jobb motor, bal motor
     #10 = 1 mOhm
-    command = f"res 8000 8000 3500 3000 end \n"
+    command = f"res 7200 7200 2700 2500 end \n"
+    #command = f"res 0 0 0 0 end \n"
     ser.write(command.encode())
-
+    time.sleep(0.1)
+    ser.write(command.encode())
 
     while 1:
         J = joy.read()
@@ -64,8 +66,9 @@ def main():
 
         # ezt el is kell kuldeni a motoroknak
         #command = f"start {int(AktFormed[0]*1000)} {int(AktFormed[1]*1000)}  {int(AktFormed[2]*1000)}  {int(AktFormed[3]*1000)}  end \n"
-        x = 800
-        command = f"start {x} {x} {x} {x} end \n"
+        x = 500
+        #command = f"start {x} {x} {x} {x} end \n"
+        command = f"start  0 0 {x} {x} end \n"
         ser.write(command.encode())
         # be isolvasom az aramot, ha van mit
         try:

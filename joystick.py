@@ -33,12 +33,15 @@ class remoteJoystick:
         self.timeout = 0.0
 
     def read(self):
-        try:
-            data, _ = self.bss.recvfrom(1000)
-            self.J = json.loads(data)
-            self.timeout = 0.0
-        except:
-            self.timeout += self.dt
+        while 1:
+            try:
+                data, add = self.bss.recvfrom(1000)
+                self.J = json.loads(data)
+                self.badd = add[0]
+                self.timeout = 0.0
+            except:
+                self.timeout += self.dt
+                break
         if(self.timeout > 1): 
             self.J = [0.0, 0.0, 0.0]
         return self.J
