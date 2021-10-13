@@ -135,7 +135,7 @@ def main():
     font = pygame.font.Font(None, 24)
     joy = myJoystic(dt)
     clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((1000, 300), pygame.RESIZABLE)
     joyPort = 6544 # Ez a joystick adatok portja
     recPort = 6546
     bss = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -164,8 +164,9 @@ def main():
         #most meg ki kell venni az osszes kapott UDP csomagot es kiirni. Sima txt/t kell kapnunk.
         while 1:
             try:
-                data, _ = bss.recvfrom(1000)
+                data, add = bss.recvfrom(1000)
                 datalist = json.loads(data)
+                badd = add[0]
             except:
                 break
 
