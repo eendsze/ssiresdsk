@@ -98,6 +98,7 @@ class myJoystic:
                 tmp += 1.0
             self.elore += self.k*(tmp - self.elore)
 
+            tmp = 0
             if pygame.key.get_pressed()[pygame.K_a]:
                 tmp += 1.0
             if pygame.key.get_pressed()[pygame.K_d]:

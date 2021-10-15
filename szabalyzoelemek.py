@@ -5,10 +5,9 @@ import math
 import pidcont
 
 # aktuator jelformalas. Egyelore egy egyszeru limietes fuggveny
-def actForm(inp):
+def actForm(inp, k = 0.25):
     # a k itt be van betonozva. Ez monjda meg, hogy mekkora az aktuatorok minimalis
     # vezerlo jele %-ban
-    k = 0.25
 
     x = abs(inp)
     if(x < k/2):
@@ -104,6 +103,9 @@ class PIDcontroller:
         self.orrF = dict['orrF']
         self.farF = dict['farF']
         self.motF = dict['motF']
+        self.Fmin = dict['Fmin']
+        self.F2U2 = dict['F2U2']
+        self.Fakt = [self.orrF, self.farF, self.motF, self.motF]
 
         # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez elvileg a tomegtol es az erositestol fugg. 
         # az erosites meg a motorok erejetol. Tehat a P tag a tomegtol es az akt. erejetol fugg, a szorzo tenyezo emirikus.
@@ -167,4 +169,10 @@ class PIDcontroller:
         # orrsugar, farsugar, jobb motor, bal motor
         return [orrsugar, farsugar, jobbMot, balMot]
 
-        #az MFb szamitasa hibas
+    # ez a PID-bol jovo normalizalt ero komponenseket atszamitja aktuator feszultsegekke. Egyben a limitalast is elvegzi.
+    def F2Volt(self, Act):
+        # meg kell szorozni az aktuator tenyleges erejevel, utana limitalas erore
+        Flim = map(lambda f, l, Fakt: actForm(f*Fakt,l), Act, self.Fmin, self.Fakt)
+        #Ez mar valos ero, atszamitasa feszultsegge
+        U = list(map(lambda f, k: math.sqrt(f*k), Flim, self.F2U2))
+        return U

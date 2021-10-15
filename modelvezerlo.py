@@ -37,14 +37,14 @@ def main():
     Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
     #Vins [self.vx, self.vy, V[2]]
     Vins = [0.0] * 3
-    # AKTUATOR 100%-HOZ TARTOZO FESZULTSEGEK orrsugar, farsugar, jobb motor, bal motor
-    Voltages = [6.0, 6.0, 3.0, 3.0]
-    AktFormed = Akt
     pwmDict = {}
     #ellenallas kalibracio kuldese. orrsugar, farsugar, jobb motor, bal motor
     #10 = 1 mOhm
-    command = f"res 7200 7200 2700 2500 end \n"
+    res = becsultDict['motRes']
+    command = f"res {int(res[0]*1000)} {int(res[1]*1000)} {int(res[2]*1000)} {int(res[3]*1000)} end \n"
     #command = f"res 0 0 0 0 end \n"
+    ser.write(command.encode())
+    time.sleep(0.1)
     ser.write(command.encode())
     time.sleep(0.1)
     ser.write(command.encode())
@@ -62,10 +62,11 @@ def main():
         Vmod = modell.process(dt, Akt, Vins)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
-        AktFormed = list(map(lambda x, v: szabalyzoelemek.actForm(x) * v, Akt, Voltages))
+        # Az Akt itt meg -1 .. +1 kozotti relativ ertek!
+        Uout = PID.F2Volt(Akt)
 
         # ezt el is kell kuldeni a motoroknak
-        #command = f"start {int(AktFormed[0]*1000)} {int(AktFormed[1]*1000)}  {int(AktFormed[2]*1000)}  {int(AktFormed[3]*1000)}  end \n"
+        #command = f"start {int(Uout[0]*1000)} {int(Uout[1]*1000)}  {int(Uout[2]*1000)}  {int(Uout[3]*1000)}  end \n"
         x = 500
         #command = f"start {x} {x} {x} {x} end \n"
         command = f"start  0 0 {x} {x} end \n"
@@ -77,7 +78,7 @@ def main():
         except:
             pass
 
-        joy.write(['Aramok: ' + json.dumps(motCurr), 'Akt. inp: ' + json.dumps(AktFormed), 'ez is'])
+        joy.write(['Aramok: ' + json.dumps(motCurr), 'Akt. inp: ' + json.dumps(Uout), 'ez is'])
 
 
         clock.tick(fps)

@@ -37,6 +37,9 @@ def main():
     PID = szabalyzoelemek.PIDcontroller(becsultDict)
     Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
     AktFormed = Akt
+    #seged, a limitalashoz
+    Fl = becsultDict['Fmin']
+    ActLim = [Fl[0]/becsultDict['orrF'],Fl[1]/becsultDict['farF'], Fl[2]/becsultDict['motF'], Fl[3]/becsultDict['motF']]
 
     while 1:
         for event in pg.event.get():
@@ -62,8 +65,8 @@ def main():
         Vmod = modell.process(dt, Akt, Vins)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
-        AktFormed = map(lambda x: szabalyzoelemek.actForm(x), Akt)
-
+        #a rendszer itt normalizalt erokkel dolgozik, ezert kell az ActLim
+        AktFormed = map(lambda x, l: szabalyzoelemek.actForm(x,l), Akt, ActLim)
 
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)

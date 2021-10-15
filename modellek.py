@@ -37,7 +37,12 @@ Hajomodell1Becs = {
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.3,
     'speedY': 0.15,
-    'speedZ': 0.5
+    'speedZ': 0.5,
+    'motRes': [0.72, 0.72, 0.27, 0.25], # orrsugar, farsugar, jobb, bal
+    #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
+    'F2U2': [10.0, 10.0, 10.0, 10.0],
+    #minimalis ero [N] amit le lehet adni az akutatorral
+    'Fmin': [0.2, 0.2, 0.2, 0.2]
 }
 
 #Nagy hajo modellje
@@ -69,15 +74,20 @@ Hajomodell2Becs = {
     'farL': 0.265,
     'farF': 0.95,
     'motL': 0.12, # propellerek tavolsaga egymastol
-    'motF': 2, #ez 200%-os is lehet egyelore
-    'tauT': 0.1, # thrusterek idoallandoja, kb.
-    'tauM': 0.1, # motorok idoallandoja
+    'motF': 2, #ez 200%-os is lehet egyelore, tehat ha az ero 2N, akkor max 4N is kimehet
+    'tauT': 0.05, # thrusterek idoallandoja, kb.
+    'tauM': 0.05, # motorok idoallandoja
     'tauFilt': 2, # a modell es a GPS mix idoallandoja
     'tauSzab': 0.3, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.3,
     'speedY': 0.15,
-    'speedZ': 0.3
+    'speedZ': 0.3,
+    'motRes': [0.72, 0.72, 0.27, 0.25], # orrsugar, farsugar, jobb, bal
+    #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
+    'F2U2': [10.0, 10.0, 10.0, 10.0],
+    #minimalis ero [N] amit le lehet adni az akutatorral
+    'Fmin': [0.2, 0.2, 0.2, 0.2]
 }
 
 
@@ -117,7 +127,12 @@ Nagyhajo445_becsles = {
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 1,
     'speedY': 0.5,
-    'speedZ': 0.1
+    'speedZ': 0.1,
+    'motRes': [0.72, 0.72, 0.27, 0.25], # orrsugar, farsugar, jobb, bal
+    #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
+    'F2U2': [10.0, 10.0, 10.0, 10.0],
+    #minimalis ero [N] amit le lehet adni az akutatorral
+    'Fmin': [200.0, 200.2, 250.2, 250.2]
 }
 
 
