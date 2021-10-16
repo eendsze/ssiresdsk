@@ -1,4 +1,4 @@
-import os, time
+import os, time, socket
 import pygame as pg
 import joystick
 import szabalyzoelemek
@@ -28,6 +28,11 @@ def main():
         exit()
     ser.flushInput()
 
+    # INS adat fogado socket
+    ss = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    ss.settimeout(0.015) #ehhez az kell hogy 100Hz-cel kuldjunk
+    ss.bind(('127.0.0.1', 6543))
+
     pg.init()
     becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
@@ -54,7 +59,20 @@ def main():
         # a hajo koordinatarendszereben: elore x, balra van a +y, balra +forg
         # *** itt van a szimulacio ***
 
-#       Vins = ide kell beolvasni az ins jelet
+        # Vins = ide kell beolvasni az ins jelet
+        try:
+            data, _ = ss.recvfrom(1000)
+            jres = json.loads(data)
+            if('gps' in jres):
+                pass
+            if ('ang' in jres):
+            #MELYIK LEGYEN
+                #ez a gyors, INS alapu sebesseg
+                #Vins = jres['Vvec']
+                #ez megy a lassu, GPS alapu
+                Vins  = jres['Vgps_vec']
+        except:
+            Vins = [0.0, 0.0, 0.0]
 
         # Az aktuatorok vezerlojele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
