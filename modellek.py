@@ -64,7 +64,7 @@ Hajomodell2 = {
     'tauM': 0.1 # motorok idoallandoja
 }
 Hajomodell2Becs = {
-    "M": [12, 18, 1.7],
+    "M": [9.5, 15, 1.5],
     "D": [1, 5, 0.1],
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
