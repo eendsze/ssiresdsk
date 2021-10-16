@@ -174,5 +174,5 @@ class PIDcontroller:
         # meg kell szorozni az aktuator tenyleges erejevel, utana limitalas erore
         Flim = map(lambda f, l, Fakt: actForm(f*Fakt,l), Act, self.Fmin, self.Fakt)
         #Ez mar valos ero, atszamitasa feszultsegge
-        U = list(map(lambda f, k: math.sqrt(f*k), Flim, self.F2U2))
+        U = list(map(lambda f, k: math.copysign(math.sqrt(abs(f)*k), f), Flim, self.F2U2))
         return U

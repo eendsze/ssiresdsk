@@ -83,9 +83,9 @@ Hajomodell2Becs = {
     'speedX': 0.3,
     'speedY': 0.15,
     'speedZ': 0.3,
-    'motRes': [0.72, 0.72, 0.27, 0.25], # orrsugar, farsugar, jobb, bal
+    'motRes': [0.72, 0.72, 0.25, 0.25], # orrsugar, farsugar, jobb, bal
     #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
-    'F2U2': [10.0, 10.0, 10.0, 10.0],
+    'F2U2': [9.0, 9.0, 2.8, 2.8],
     #minimalis ero [N] amit le lehet adni az akutatorral
     'Fmin': [0.2, 0.2, 0.2, 0.2]
 }

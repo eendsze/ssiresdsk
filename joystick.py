@@ -54,7 +54,10 @@ class remoteJoystick:
 
     def write(self, d):
         txt = json.dumps(d)
-        self.bss.sendto(txt.encode(), (self.badd, self.sendPort))
+        try:
+            self.bss.sendto(txt.encode(), (self.badd, self.sendPort))
+        except:
+            pass
 
 class myJoystic:
     elore = 0.0
