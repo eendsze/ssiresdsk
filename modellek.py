@@ -70,9 +70,9 @@ Hajomodell2Becs = {
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
     'orrL': 0.43, #orrkormany tavolsaga a hajo forgaspontjatol
-    'orrF': 0.95,
+    'orrF': 1.0,
     'farL': 0.265,
-    'farF': 0.95,
+    'farF': 1.0,
     'motL': 0.12, # propellerek tavolsaga egymastol
     'motF': 2, #ez 200%-os is lehet egyelore, tehat ha az ero 2N, akkor max 4N is kimehet
     'tauT': 0.05, # thrusterek idoallandoja, kb.

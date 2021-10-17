@@ -30,7 +30,7 @@ def main():
 
     # INS adat fogado socket
     ss = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    ss.settimeout(0.1) #ehhez az kell hogy 100Hz-cel kuldjunk
+    ss.settimeout(0.02) 
     ss.bind(('127.0.0.1', 6543))
 
     #pg.init()
@@ -88,8 +88,8 @@ def main():
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
 
-        x = -1.0 # arany, nem N
-        #Akt = [0, 0, x, x]
+        x = 0.1 # arany, nem N
+        #Akt = [x, x, x, x]
         # Az Akt itt meg -1 .. +1 kozotti relativ ertek!
         Uout = PID.F2Volt(Akt)
 
