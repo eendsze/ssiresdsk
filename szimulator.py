@@ -18,18 +18,18 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def main():
     pg.init()
-    dict = Nagyhajo445_modell
-    becsultDict = Nagyhajo445_becsles
-    #dict = Hajomodell2
-    #becsultDict = Hajomodell2Becs
+    #dict = Nagyhajo445_modell
+    #becsultDict = Nagyhajo445_becsles
+    dict = Hajomodell2
+    becsultDict = Hajomodell2Becs
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, dict)
     joy = joystick.myJoystic(dt)
     megj = megjelenit.disp()
     valosModell = fizikaimodell.physicalShip(dict)
-    valosModell.setEnvironment(Kornyezet1)
-    #valosModell.setEnvironment(KornyezetCsendes)
+    #valosModell.setEnvironment(Kornyezet1)
+    valosModell.setEnvironment(KornyezetCsendes)
     AkForces = [0.0, 0.0, 0.0, 0.0]
     aktuators = szimulaltelemek.akutatorSim(dict)
     INS = szimulaltelemek.insSim()

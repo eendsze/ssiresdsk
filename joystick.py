@@ -6,6 +6,7 @@
 # amin keresztul elkuldi a printelendo adatokat egy lsitaban (minden listaelem uj sorken jelenik meg)
 # ha onmagaban futtatjak, akkor meg o a kuldo, kezeli a joysticket es elkuldi, ami jon azt meg megjeleniti.
 
+from math import copysign
 import pygame
 import socket
 import json
@@ -15,6 +16,13 @@ fps = 50
 dt = 1.0/fps
 WHITE = (255, 255, 255)
 BACKGND = (0, 0, 0)
+
+def limit(x):
+    ax = abs(x)
+    ax -= 0.2
+    if(ax < 0):
+        ax = 0
+    return copysign(ax, x)
 
 class remoteJoystick:
     recPort = 6544
@@ -83,9 +91,9 @@ class myJoystic:
 
     def read(self):
         if self.joyExist:
-            self.jobbra =  -(self.joystick.get_axis(2) + self.xo)
-            self.elore = -(self.joystick.get_axis(3) + self.yo)
-            self.forg = -(self.joystick.get_axis(0) + self.zo)
+            self.jobbra = limit(-(self.joystick.get_axis(2) + self.xo))
+            self.elore = limit(-(self.joystick.get_axis(3) + self.yo))
+            self.forg = limit(-(self.joystick.get_axis(0) + self.zo))
         else:
             tmp = 0
             if pygame.key.get_pressed()[pygame.K_LEFT]:
