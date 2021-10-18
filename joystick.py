@@ -6,11 +6,13 @@
 # amin keresztul elkuldi a printelendo adatokat egy lsitaban (minden listaelem uj sorken jelenik meg)
 # ha onmagaban futtatjak, akkor meg o a kuldo, kezeli a joysticket es elkuldi, ami jon azt meg megjeleniti.
 
-from math import copysign
+from math import copysign, pi
 import pygame
 import socket
 import json
 import netifaces
+import hajomegjelenito
+from modellek import *
 
 fps = 50
 dt = 1.0/fps
@@ -147,7 +149,10 @@ def main():
     font = pygame.font.Font(None, 24)
     joy = myJoystic(dt)
     clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((1000, 300), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((800, 800), pygame.RESIZABLE)
+    hajoAdatok = Hajomodell2
+    hajo = hajomegjelenito.HajoObject(screen, hajoAdatok)
+    hajo.setPosition([0, 0, pi/2])
     joyPort = 6544 # Ez a joystick adatok portja
     recPort = 6546
     bss = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -157,7 +162,8 @@ def main():
     b = socket.inet_aton(gwadd)
     badd = f'{b[0]}.{b[1]}.{b[2]}.255'
     bss.bind(('0.0.0.0', recPort))
-    datalist = []
+    dd = {}
+    count = 0
 
     print('Broadcast address:' + badd)
 
@@ -177,18 +183,29 @@ def main():
         while 1:
             try:
                 data, add = bss.recvfrom(1000)
-                datalist = json.loads(data)
+                dd = json.loads(data)
                 badd = add[0]
+                count += 1
             except:
                 break
 
-        screen.fill(BACKGND)
-        pos = 10
-        for x in datalist:
-            text = font.render(x, True, WHITE, BACKGND)
-            screen.blit(text, (10,pos))
-            pos += 25
+        if 'motCurr' in dd:
+            d = dd['motCurr']
+            hajo.Iact = [d['I1'], d['I2'], d['I3'], d['I4']]
+            hajo.U12V = d['Ubat']
+        if 'Uout' in dd:
+            hajo.Uact = dd['Uout']
+        if 'Vins' in dd:
+            hajo.speedVect2 = dd['Vins']
+        if 'Vmod' in dd:
+            hajo.speedVect = dd['Vmod']
+        if 'Vgps' in dd:
+            hajo.speedVect3 = dd['Vgps']
+        if 'Akt' in dd:
+            hajo.setThrust(dd['Akt'])
 
+        hajo.count = count
+        hajo.draw()
         pygame.display.update()
         clock.tick(50)
 

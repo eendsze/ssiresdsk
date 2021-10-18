@@ -18,28 +18,28 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def main():
     pg.init()
-    #dict = Nagyhajo445_modell
-    #becsultDict = Nagyhajo445_becsles
-    dict = Hajomodell2
-    becsultDict = Hajomodell2Becs
+    #hajoAdatok = Nagyhajo445_modell
+    #becsulthajoAdatok = Nagyhajo445_becsles
+    hajoAdatok = Hajomodell2
+    becsulthajoAdatok = Hajomodell2Becs
     clock = pg.time.Clock()
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
-    hajo = hajomegjelenito.HajoObject(screen, dict)
+    hajo = hajomegjelenito.HajoObject(screen, hajoAdatok)
     joy = joystick.myJoystic(dt)
     megj = megjelenit.disp()
-    valosModell = fizikaimodell.physicalShip(dict)
+    valosModell = fizikaimodell.physicalShip(hajoAdatok)
     #valosModell.setEnvironment(Kornyezet1)
     valosModell.setEnvironment(KornyezetCsendes)
     AkForces = [0.0, 0.0, 0.0, 0.0]
-    aktuators = szimulaltelemek.akutatorSim(dict)
+    aktuators = szimulaltelemek.akutatorSim(hajoAdatok)
     INS = szimulaltelemek.insSim()
-    modell = szabalyzoelemek.modell(becsultDict)
-    PID = szabalyzoelemek.PIDcontroller(becsultDict)
+    modell = szabalyzoelemek.modell(becsulthajoAdatok)
+    PID = szabalyzoelemek.PIDcontroller(becsulthajoAdatok)
     Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
     AktFormed = Akt
     #seged, a limitalashoz
-    Fl = becsultDict['Fmin']
-    ActLim = [Fl[0]/becsultDict['orrF'],Fl[1]/becsultDict['farF'], Fl[2]/becsultDict['motF'], Fl[3]/becsultDict['motF']]
+    Fl = becsulthajoAdatok['Fmin']
+    ActLim = [Fl[0]/becsulthajoAdatok['orrF'],Fl[1]/becsulthajoAdatok['farF'], Fl[2]/becsulthajoAdatok['motF'], Fl[3]/becsulthajoAdatok['motF']]
 
     while 1:
         for event in pg.event.get():
@@ -71,6 +71,7 @@ def main():
         # Ezek a megjelenites dolgai, a szabalyzasba nem szol bele
         hajo.setPosition(valosModell.X)
         hajo.setspeed(V)
+        hajo.setSpeeds(Vins, Vmod)
         hajo.setThrust(AkForces)
         #hajo.setThrust(Akt)
         if joy.getReset():

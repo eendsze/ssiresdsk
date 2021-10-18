@@ -42,6 +42,7 @@ def main():
     Akt = [ 0, 0, 0, 0] # orrsugar, farsugar, jobb motor, bal motor
     #Vins [self.vx, self.vy, V[2]]
     Vins = [0.0] * 3
+    Vgps = [0.0] * 3
     #pwmDict = {}
     #ellenallas kalibracio kuldese. orrsugar, farsugar, jobb motor, bal motor
     #10 = 1 mOhm
@@ -67,24 +68,24 @@ def main():
             data, _ = ss.recvfrom(1000)
             jres = json.loads(data)
             if ('ang' in jres):
-            #MELYIK LEGYEN
                 #ez a gyors, INS alapu sebesseg
-                #Vins = jres['Vvec']
-                #ig megy csak a szoget veszi az INS-bol
-                Vins[2] = jres['Vvec'][2]
+                Vins = jres['Vvec']
+                #ez megy csak a szoget veszi az INS-bol
+                Vgps[2] = jres['Vvec'][2]
             if('gps' in jres):
-                Vins  = jres['Vgps_vec']
-                pass
+                Vgps  = jres['Vgps_vec']
             count += 1
         except Exception as e:
             Vins = [0.0, 0.0, 0.0]
+            Vgps = Vins
             print(e)
             pass
 
         # Az aktuatorok vezerlojele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
         # A modell a nyers Akt-ot kapja, ami a szabalyzas kimenete.
-        Vmod = modell.process(dt, Akt, Vins)
+#        Vmod = modell.process(dt, Akt, Vins)
+        Vmod = modell.process(dt, Akt, Vgps)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
 
@@ -100,15 +101,15 @@ def main():
         #command = f"start {x} {x} {x} {x} end \n"
         #command = f"start  0 0 {x} {x} end \n"
         ser.write(command.encode())
-        # be isolvasom az aramot, ha van mit
+        # be isolvasom az aramot, ha van mit. Ennek a vegen van az U12V
         try:
             res = ser.readline()
             motCurr = json.loads(res)
         except:
             pass
 
-        joy.write(['Aramok: ' + json.dumps(motCurr), 'U ki: ' + json.dumps(Uout), 'INS seb: ' + json.dumps(Vins), 'Joy inp: ' + json.dumps(J), f'count: {count}'])
-
+        #joy.write(['Aramok: ' + json.dumps(motCurr), 'U ki: ' + json.dumps(Uout), 'INS seb: ' + json.dumps(Vins), 'Joy inp: ' + json.dumps(J), f'count: {count}'])
+        joy.write({'motCurr': motCurr, 'Uout': Uout, 'Vins': Vins, 'Vmod': Vmod, 'Vgps': Vgps, 'Akt': Akt})
 
         #clock.tick(fps)
 
