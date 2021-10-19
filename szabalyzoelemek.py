@@ -93,6 +93,8 @@ class modell:
         return self.V
 
 class PIDcontroller:
+    Fki = [0.0]*4 #ez az aktuatorok kimeno erteke, formazas utan.
+
     def __init__(self, dict) -> None:
         self.speedX = dict['speedX']
         self.speedY = dict['speedY']
@@ -104,6 +106,7 @@ class PIDcontroller:
         self.farF = dict['farF']
         self.motF = dict['motF']
         self.Fmin = dict['Fmin']
+        self.Hist = dict['Hist']
         self.F2U2 = dict['F2U2']
         self.Fakt = [self.orrF, self.farF, self.motF, self.motF]
 
@@ -169,10 +172,41 @@ class PIDcontroller:
         # orrsugar, farsugar, jobb motor, bal motor
         return [orrsugar, farsugar, jobbMot, balMot]
 
+    # Ennek kell hiszterezisessen formazni az aktuatorok erejet. A cel, hogy Fmin-nel kisebb ero ne menjen ki.
+    # Meg van adva a minimalis ero 'Fmin' 
+    # es a hiszterezis 'Hist'. Az 1/2Fmin +/-Hist/2 szinteknel valt, Fmin felett pedig a normal ero megy ki.
+    # az eredmenyt a self.Fki-be teszi, mert az ugyis kell az algoritmuhoz a hiszterezis miatt
+    def akt_form(self, F):
+        for i in range(4):
+            if(F[i] > self.Fmin[i]):
+                self.Fki[i] = F[i]
+            elif(F[i] > (self.Fmin[i]+self.Hist[i])/2):
+                self.Fki[i] = self.Fmin[i]
+            elif(F[i] > (self.Fmin[i]-self.Hist[i])/2):
+                if(self.Fki[i] > 0): #itt a kimenetet nezi
+                    self.Fki[i] = self.Fmin[i]
+                else:
+                    self.Fki[i] = 0
+            elif(F[i] > -(self.Fmin[i]-self.Hist[i])/2):
+                self.Fki[i] = 0
+            elif(F[i] > -(self.Fmin[i]+self.Hist[i])/2):
+                if(self.Fki[i] < 0): #itt a kimenetet nezi
+                    self.Fki[i] = -self.Fmin[i]
+                else:
+                    self.Fki[i] = 0
+            elif(F[i] > -self.Fmin[i]):
+                self.Fki[i] = -self.Fmin[i]
+            else:
+                self.Fki[i] = F[i]
+        return self.Fki
+
     # ez a PID-bol jovo normalizalt ero komponenseket atszamitja aktuator feszultsegekke. Egyben a limitalast is elvegzi.
     def F2Volt(self, Act):
-        # meg kell szorozni az aktuator tenyleges erejevel, utana limitalas erore
-        Flim = map(lambda f, l, Fakt: actForm(f*Fakt,l), Act, self.Fmin, self.Fakt)
+        # meg kell szorozni az aktuator tenyleges erejevel, 
+        F = list(map(lambda a, Fakt: a * Fakt, Act, self.Fakt))
+        # utana limitalas erore
+        self.akt_form(F) #az eredmeny a self.Fki -ben van
+        #Flim = map(lambda f, l: actForm(f,l), F, self.Fmin)
         #Ez mar valos ero, atszamitasa feszultsegge
-        U = list(map(lambda f, k: math.copysign(math.sqrt(abs(f)*k), f), Flim, self.F2U2))
+        U = list(map(lambda f, k: math.copysign(math.sqrt(abs(f)*k), f), self.Fki, self.F2U2))
         return U
