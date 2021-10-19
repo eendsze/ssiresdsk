@@ -79,13 +79,16 @@ def main():
             Vins = [0.0, 0.0, 0.0]
             Vgps = Vins
             print(e)
-            pass
+
+        Vgps = [Vgps[1], -Vgps[0], Vgps[2]]
+        Vins = [Vins[1], -Vins[0], Vins[2]]
+        # Ez valasztja ki hogy mirol menjen a vezerles
+        vt = Vins
 
         # Az aktuatorok vezerlojele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
         # A modell a nyers Akt-ot kapja, ami a szabalyzas kimenete.
-#        Vmod = modell.process(dt, Akt, Vins)
-        Vmod = modell.process(dt, Akt, Vgps)
+        Vmod = modell.process(dt, Akt, vt)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
 
