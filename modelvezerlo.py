@@ -97,6 +97,9 @@ def main():
         # Az Akt itt meg -1 .. +1 kozotti relativ ertek!
         Uout = PID.F2Volt(Akt)
 
+        if(J[3] == 0):
+            Uout = [0]*4
+
         # ezt el is kell kuldeni a motoroknak
         command = f"start {int(Uout[0]*1000)} {int(Uout[1]*1000)}  {int(Uout[2]*1000)}  {int(Uout[3]*1000)}  end \n"
 
