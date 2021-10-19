@@ -112,21 +112,21 @@ class HajoObject:
         pg.draw.line(self.screen, LAWNGREEN, self.lastThVec[4][0], self.lastThVec[4][1], width = 3)
         # texts
         # speed, ez a valos sebesseg vagy az INS sebesseg
-        text = self.font.render("Speed / INS", True, WHITE, BACKGND)
+        text = self.font.render("Speed / GPS", True, LAWNGREEN, BACKGND)
         yy = 10
         self.screen.blit(text, (10,yy))
         for i in range(2):
             text = self.font.render(f"V{i}: {self.speed[i]:3.2f} [m/s], ", True, WHITE, BACKGND)
             self.screen.blit(text, (150+i*130,yy))
         # speed2, ez a modell sebesseg
-        text = self.font.render("Modell sebesseg", True, WHITE, BACKGND)
+        text = self.font.render("INS sebesseg", True, SARGA, BACKGND)
         yy = 35
         self.screen.blit(text, (10,yy))
         for i in range(2):
             text = self.font.render(f"V{i}: {self.speed2[i]:3.2f} [m/s], ", True, WHITE, BACKGND)
             self.screen.blit(text, (150+i*130,yy))
         # speed3, ez a GPS sebesseg
-        text = self.font.render("GPS sebesseg", True, WHITE, BACKGND)
+        text = self.font.render("Modell sebesseg", True, BARNA, BACKGND)
         yy = 60
         self.screen.blit(text, (10,yy))
         for i in range(2):

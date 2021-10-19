@@ -196,11 +196,9 @@ def main():
         if 'Uout' in dd:
             hajo.Uact = dd['Uout']
         if 'Vins' in dd:
-            hajo.speedVect2 = dd['Vins']
-        if 'Vmod' in dd:
-            hajo.speedVect = dd['Vmod']
+            hajo.setspeed(dd['Vins'])
         if 'Vgps' in dd:
-            hajo.speedVect3 = dd['Vgps']
+            hajo.setSpeeds(dd['Vgps'], dd['Vmod'])
         if 'Akt' in dd:
             hajo.setThrust(dd['Akt'])
 
