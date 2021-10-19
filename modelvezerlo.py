@@ -92,7 +92,7 @@ def main():
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
 
-        x = 0.1 # arany, nem N
+        #x = 0.1 # arany, nem N
         #Akt = [x, x, x, x]
         # Az Akt itt meg -1 .. +1 kozotti relativ ertek!
         Uout = PID.F2Volt(Akt)

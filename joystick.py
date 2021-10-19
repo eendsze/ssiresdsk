@@ -39,7 +39,7 @@ class remoteJoystick:
         b = socket.inet_aton(gwadd)
         self.badd = f'{b[0]}.{b[1]}.{b[2]}.255'
         self.bss.bind(('0.0.0.0', self.recPort))
-        self.J = [0.0, 0.0, 0.0]
+        self.J = [0.0, 0.0, 0.0, 0]
         self.timeout = 0.0
 
     def read(self):
@@ -178,6 +178,11 @@ def main():
                     On = 1
                 if(event.dict['button'] == 1):
                     On = 0
+        #meg kell nezni billenytuzetrol is. B bekapcs, K kikapcs
+        if pygame.key.get_pressed()[pygame.K_b]:
+            On = 1
+        if pygame.key.get_pressed()[pygame.K_k]:
+            On = 0
 
         J = joy.read() 
         str = json.dumps(J + [On])
