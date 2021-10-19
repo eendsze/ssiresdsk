@@ -53,7 +53,7 @@ class remoteJoystick:
                 self.timeout += self.dt
                 break
         if(self.timeout > 1): 
-            self.J = [0.0, 0.0, 0.0]
+            self.J = [0.0, 0.0, 0.0, 0]
         return self.J
 
     def readOffset(self):
@@ -164,6 +164,7 @@ def main():
     bss.bind(('0.0.0.0', recPort))
     dd = {}
     count = 0
+    On = 0
 
     print('Broadcast address:' + badd)
 
@@ -173,9 +174,13 @@ def main():
                 return
             if event.type == pygame.JOYBUTTONDOWN:
                 joy.readOffset()
+                if(event.dict['button'] == 3):
+                    On = 1
+                if(event.dict['button'] == 1):
+                    On = 0
 
         J = joy.read() 
-        str = json.dumps(J)
+        str = json.dumps(J + [On])
         #print(str + '\r', end='', flush=True)
         bss.sendto(str.encode(), (badd, joyPort))
 
