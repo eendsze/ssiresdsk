@@ -66,8 +66,8 @@ Hajomodell2 = {
     'tauM': 0.1 # motorok idoallandoja
 }
 Hajomodell2Becs = {
-    "M": [9.2, 15, 1.5],
-    "D": [1, 5, 0.1],
+    "M": [10.2, 15, 1.5],
+    "D": [2, 4, 0.1],
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
@@ -80,7 +80,7 @@ Hajomodell2Becs = {
     'tauT': 0.05, # thrusterek idoallandoja, kb.
     'tauM': 0.05, # motorok idoallandoja
     # 
-    'tauFilt': 1.0, # a modell es a GPS mix idoallandoja
+    'tauFilt': 0.5, # a modell es a GPS mix idoallandoja
     'tauSzab': 0.3, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.5,
@@ -88,7 +88,7 @@ Hajomodell2Becs = {
     'speedZ': 0.5,
     'motRes': [0.72, 0.72, 0.27, 0.27], # orrsugar, farsugar, jobb, bal
     #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
-    'F2U2': [9.0, 9.0, 2.4, 2.4],
+    'F2U2': [9.0, 9.0, 3.4, 3.4],
     #minimalis ero [N] amit le lehet adni az akutatorral
     'Fmin': [0.2, 0.2, 0.2, 0.2],
     #ez meg a hozza tartozo hiszterezis
