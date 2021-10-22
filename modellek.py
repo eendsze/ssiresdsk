@@ -49,7 +49,7 @@ Hajomodell1Becs = {
 
 #Nagy hajo modellje
 Hajomodell2 = {
-    "M": [12.6, 20, 1.7],
+    "M": [9.6, 15, 1.7],
     "D": [2, 20, 0.1],
     "Af": [1.7, 1.8, 1.6],
     'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz

@@ -205,10 +205,10 @@ def main():
             hajo.U12V = d['Ubat']
         if 'Uout' in dd:
             hajo.Uact = dd['Uout']
-        if 'Vins' in dd:
-            hajo.setspeed(dd['Vins'])
         if 'Vgps' in dd:
-            hajo.setSpeeds(dd['Vgps'], dd['Vmod'])
+            hajo.setspeed(dd['Vgps'])
+        if 'Vins' in dd:
+            hajo.setSpeeds(dd['Vins'], dd['Vmod'])
         if 'Akt' in dd:
             hajo.setThrust(dd['Akt'])
 
