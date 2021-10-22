@@ -70,18 +70,18 @@ def main():
             if ('ang' in jres):
                 #ez a gyors, INS alapu sebesseg
                 Vins = jres['Vvec']
+                Vins = [Vins[1], -Vins[0], Vins[2]]
                 #ez megy csak a szoget veszi az INS-bol
-                Vgps[2] = jres['Vvec'][2]
+                Vgps[2] = Vins[2]
             if('gps' in jres):
                 Vgps  = jres['Vgps_vec']
+                Vgps = [Vgps[1], -Vgps[0], Vgps[2]]
             count += 1
         except Exception as e:
             Vins = [0.0, 0.0, 0.0]
             Vgps = Vins
             print(e)
 
-        Vgps = [Vgps[1], -Vgps[0], Vgps[2]]
-        Vins = [Vins[1], -Vins[0], Vins[2]]
         # Ez valasztja ki hogy mirol menjen a vezerles
         vt = Vins
 
