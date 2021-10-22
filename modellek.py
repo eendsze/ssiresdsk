@@ -88,7 +88,7 @@ Hajomodell2Becs = {
     'speedZ': 0.5,
     'motRes': [0.72, 0.72, 0.27, 0.27], # orrsugar, farsugar, jobb, bal
     #ero / fesz negyzet aranyossag. Tehat 10 azt jelenti, hogy 1N megfelel gyok 10 V-nak
-    'F2U2': [9.0, 9.0, 3.4, 3.4],
+    'F2U2': [9.0, 9.0, 2.4, 2.4],
     #minimalis ero [N] amit le lehet adni az akutatorral
     'Fmin': [0.2, 0.2, 0.2, 0.2],
     #ez meg a hozza tartozo hiszterezis
