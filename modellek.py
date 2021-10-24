@@ -50,7 +50,7 @@ Hajomodell1Becs = {
 #Nagy hajo modellje
 Hajomodell2 = {
     "M": [9.6, 15, 1.7],
-    "D": [2, 20, 0.1],
+    "D": [6, 10, 0.1],
     "Af": [1.7, 1.8, 1.6],
     'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz
     "length": 1.4,
@@ -80,7 +80,7 @@ Hajomodell2Becs = {
     'tauT': 0.05, # thrusterek idoallandoja, kb.
     'tauM': 0.05, # motorok idoallandoja
     # 
-    'tauFilt': 0.5, # a modell es a GPS mix idoallandoja
+    'tauFilt': 2, # a modell es a GPS mix idoallandoja
     'tauSzab': 0.3, # ez a PID-ek szabalyzasi frekvenciaja, a szabalyzs sebessege (1/tau)
     # ide jon meg a sebessegek maximuma, amit a szabalyzas megenged.
     'speedX': 0.5,

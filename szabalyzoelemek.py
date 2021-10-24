@@ -53,7 +53,7 @@ class modell:
     # az Ak egy lista 4 elemmel, akutatorok %-ban: orrsugar, farsugar, jobb motor, bal motor
     # a V a sebesseg vektor, amit az INS-tol kap
     # kimenet a szamitott sebessegek, a szabalyzohoz
-    def process(self, dt, Ak, V):
+    def process(self, dt, Ak, Vins):
         l = dt / self.taufilt
         # erok szamitasa az aktuatorok vezerlo jelei alapjan
         F = [0.0, 0.0]
@@ -63,9 +63,9 @@ class modell:
         # sebessegek pontositasa az INS alapjan
         # Az INS sebesseg adatat megszurom -> Vsz
         for i in range(2):
-            self.Vszurt[i] += (V[i] - self.Vszurt[i]) * l
+            self.Vszurt[i] += (Vins[i] - self.Vszurt[i]) * l
         # a szogsebesseget atveszem valtoztatas nelkul az INS-tol
-        self.V[2] = V[2]
+        self.V[2] = Vins[2]
 
         # mozgasegyenletek.
         # fontos a csillapitas, amit a modellbol adodo sebesseggel szamitok
@@ -78,6 +78,8 @@ class modell:
         for i in range(2):
             # integralas. A gyorsitast hozzadom Vmod-hez
             self.Vmod[i] += A[i]*dt
+            # beteszek egy szuro / csillapito elemet, ami a Vmod-ot hozzahuzza a valosagos INS sebesseghez
+#            self.Vmod[i] -= l * (self.Vmod[i] - Vins[i])
             # szurt mdell sebesseg szamitasa
             self.Vmsz[i] = self.Vmod[i] + self.CVsz[i]
             # soros kondi kisulese
@@ -168,6 +170,48 @@ class PIDcontroller:
         MFb = (orrsugar * self.orrF * self.orrL - farsugar * self.farF * self.farL + (jobbMot-balMot)/2 * self.motF * self.motL) / self.Mi
         self.xpid.postProcess(eloFb)
         self.ypid.postProcess(jobbFb)
+        self.zpid.postProcess(MFb)
+        # orrsugar, farsugar, jobb motor, bal motor
+        return [orrsugar, farsugar, jobbMot, balMot]
+
+    # input: V sebesseg vektor, J joystick: elore, jobbra, forg
+    # ez az a valtozat, amikor csak az iranytartast veszi az INS-bol, az x,y-nt nem.
+    def processJoyOnly(self, dt, V, J):
+        #Elo = self.xpid.process((J[0]*self.speedX - V[0]), dt)
+        Elo = J[0]
+        #Job = self.ypid.process((J[1]*self.speedY - V[1]), dt)
+        Job = J[1]
+        M = self.zpid.process((J[2]*self.speedZ - V[2]), dt)
+        # Erok szetosztasa
+        # 1: erok kiosztas az aktuatorokra. Figyelembe kell venni a keletkezo nyomatekokat
+        # az x irany egyszeru
+        jobbMot = Elo
+        balMot = Elo
+        # az y irany is egyszeru, de ellenorizni kell, hogy a keletkezo nyomatekot a fomotorok tudjak-e kompenzalni?
+        orrsugar = Job
+        farsugar = Job
+        # a keletkezo nyomatek:
+        m2 = orrsugar * self.orrL * self.orrF - farsugar * self.farL * self.farF
+        # ezt levonjuk motorokbol
+        comp = m2 / self.motF / self.motL
+        jobbMot -= comp
+        balMot += comp
+        # a forgato komponens hozzaadasa
+        jobbMot += M
+        balMot -= M
+        orrsugar += M
+        farsugar -= M
+        # 2: limitalas aktuatoronkent. A motorok 200%-ra vannak limitalva
+        jobbMot =  max(min(2.0, jobbMot), -2.0)
+        balMot =  max(min(2.0, balMot), -2.0)
+        orrsugar =  max(min(1.0, orrsugar), -1.0)
+        farsugar =  max(min(1.0, farsugar), -1.0)
+        # 3: kiszamitjuk hogy az elo, job, M tagok hany%-a ervenyesult, es ezt visszacsatoljuk a szabalyzokba.
+        #eloFb = (jobbMot + balMot) / 2
+        #jobbFb = (orrsugar + farsugar) / 2
+        MFb = (orrsugar * self.orrF * self.orrL - farsugar * self.farF * self.farL + (jobbMot-balMot)/2 * self.motF * self.motL) / self.Mi
+        #self.xpid.postProcess(eloFb)
+        #self.ypid.postProcess(jobbFb)
         self.zpid.postProcess(MFb)
         # orrsugar, farsugar, jobb motor, bal motor
         return [orrsugar, farsugar, jobbMot, balMot]
