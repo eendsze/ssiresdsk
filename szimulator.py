@@ -67,8 +67,8 @@ def main():
         # A modell a nyers Akt-ot kapja, ami a szabalyzas kimenete.
 
 #beteszek egy hibat
-#        Akt[2] = Akt[2] * 2
-#        Akt[3] = Akt[3] * 2
+#        Akt[2] = Akt[2] * 3
+#        Akt[3] = Akt[3] * 3
 
         Vmod = modell.process(dt, Akt, Vins)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit

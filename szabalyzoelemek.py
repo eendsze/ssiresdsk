@@ -79,7 +79,7 @@ class modell:
             # integralas. A gyorsitast hozzadom Vmod-hez
             self.Vmod[i] += A[i]*dt
             # beteszek egy szuro / csillapito elemet, ami a Vmod-ot hozzahuzza a valosagos INS sebesseghez
-#            self.Vmod[i] -= l * (self.Vmod[i] - Vins[i])
+            self.Vmod[i] -= l * (self.Vmod[i] - Vins[i])
             # szurt mdell sebesseg szamitasa
             self.Vmsz[i] = self.Vmod[i] + self.CVsz[i]
             # soros kondi kisulese
