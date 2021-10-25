@@ -18,8 +18,10 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def main():
     pg.init()
+    #
     #hajoAdatok = Nagyhajo445_modell
     #becsulthajoAdatok = Nagyhajo445_becsles
+    #
     hajoAdatok = Hajomodell2
     becsulthajoAdatok = Hajomodell2Becs
     clock = pg.time.Clock()
@@ -28,6 +30,7 @@ def main():
     joy = joystick.myJoystic(dt)
     megj = megjelenit.disp()
     valosModell = fizikaimodell.physicalShip(hajoAdatok)
+    #
     #valosModell.setEnvironment(Kornyezet1)
     valosModell.setEnvironment(KornyezetCsendes)
     AkForces = [0.0, 0.0, 0.0, 0.0]
@@ -62,9 +65,15 @@ def main():
         # Az aktuatorok vezerlojele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
         # A modell a nyers Akt-ot kapja, ami a szabalyzas kimenete.
+
+#beteszek egy hibat
+#        Akt[2] = Akt[2] * 3
+#        Akt[3] = Akt[3] * 3
+
         Vmod = modell.process(dt, Akt, Vins)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
+#        Akt = PID.processJoyOnly(dt, Vmod, J)
         # hogy tesztelheto legyen az akt_form(), eloszor megszorzom az erovel, aztan visszaosztom, mert a szimulacio relativ 
         # erokat hasznal
         F = list(map(lambda a, Fakt: a * Fakt, Akt, Fakt))
