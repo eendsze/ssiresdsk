@@ -36,7 +36,7 @@ class modell:
 
     def __init__(self, dict) -> None:
         self.M = dict["M"]
-        self.D = dict["D"]
+        self.Dm = dict["Dm"]
         # Sugarkormanyok es motork adatai. Ha nincs farsugar, akkkor annak az ereje 0.
         # ha egy motor van, akkor a tavolsaguk nulla, es csak az egyiket kell nem 0-ra allitani
         self.orrL = dict["orrL"] #orrsugar tavolsaga a kozepponttol
@@ -70,10 +70,8 @@ class modell:
         # mozgasegyenletek.
         # fontos a csillapitas, amit a modellbol adodo sebesseggel szamitok
         A=[0.0,0.0]
-        A[0] = (F[0] + self.M[1]*self.V[1]*self.V[2] - self.D[0]*self.Vmod[0]) / self.M[0]
-        A[1] = (F[1] - self.M[0]*self.V[0]*self.V[2] - self.D[1]*self.Vmod[1]) / self.M[1]
-        #A[0] = self.CAsz[0] + (F[0] + self.M[1]*self.V[1]*self.V[2]) / self.M[0]
-        #A[1] = self.CAsz[1] + (F[1] - self.M[0]*self.V[0]*self.V[2]) / self.M[1]
+        A[0] = (F[0] + self.M[1]*self.V[1]*self.V[2] - self.Dm[0]*self.Vmod[0]) / self.M[0]
+        A[1] = (F[1] - self.M[0]*self.V[0]*self.V[2] - self.Dm[1]*self.Vmod[1]) / self.M[1]
 
         for i in range(2):
             # integralas. A gyorsitast hozzadom Vmod-hez
@@ -113,24 +111,27 @@ class PIDcontroller:
         self.Fakt = [self.orrF, self.farF, self.motF, self.motF]
 
         # a szabalyzokat hatarfrekvenciara kell optimalizalni. Ez elvileg a tomegtol es az erositestol fugg. 
-        # az erosites meg a motorok erejetol. Tehat a P tag a tomegtol es az akt. erejetol fugg, a szorzo tenyezo emirikus.
+        # az erosites meg a motorok erejetol. Tehat a P tag a tomegtol es az akt. erejetol fugg.
+        # van meg benne 1/tauSzab, ez a maximum ameddig erdemes felmenni
         tau = dict['tauM']
         p = dict['M'][0] / dict['motF'] / dict['tauSzab']
-        i = p*dict['D'][0]/dict['M'][0]
-        d = p*tau *0
+        i = p*dict['Dp'][0]/dict['M'][0]
+        #d = p*tau
+        d = 0
         self.xpid = pidcont.PIDclass(p, i, d)
 
         tau = dict['tauT']
         p = dict['M'][1] / (dict['orrF'] + dict['farF']) / dict['tauSzab']
-        i = p*dict['D'][1]/dict['M'][1]
-        d = p*tau *0
+        i = p*dict['Dp'][1]/dict['M'][1]
+        #d = p*tau
+        d = 0
         self.ypid = pidcont.PIDclass(p, i, d)
 
         tau = max(dict['tauT'], dict['tauM'])
         # az Mi a motorok nyomatek kepzese, fugg a nyomatek elosztastol is.Most az egyszeru eset van.
         self.Mi = dict['orrF'] * dict['orrL'] + dict['farF'] * dict['farL'] + 2*dict['motF']*dict['motL']
         p = dict['M'][2] / self.Mi / dict['tauSzab']
-        i = p*dict['D'][2]/dict['M'][2]
+        i = p*dict['Dp'][2]/dict['M'][2]
         # ide kell a D tag, mert ez nem a modellre szabalyoz.
         d = p*tau
         self.zpid = pidcont.PIDclass(p, i, d)

@@ -18,7 +18,6 @@ class PIDclass:
         self.kdt = D
 
     # Itt kapja meg a PID a hiba jelet, es kiszamitja a kimeno jelet
-    # Uj: a kimenetet nem korlatozzuk le, azt majd a felhasznalo korlatozza
     def process(self, err, dt):
         self.err = err
         self.dt = dt
@@ -43,7 +42,7 @@ class PIDclass:
         # itt a self.output-tal szamolunk, azt kell visszahozni. A kimenet limitalva volt, de az itt nem erdekes
         diff = fb - self.output
         errDelta = diff / (self.kpt + self.kdt / self.dt)
-        self.err += errDelta # ez az a szam, ami nem okozott volna kiulest, ezzel kell integralni
+        self.err += errDelta # ez lesz az a szam, ami nem okozott volna kiulest, ezzel kell integralni
         # ide kerul az integralas
         self.Iterm += self.err * self.dt
         # es a modositott erteket taroljuk el lastErr-kent.

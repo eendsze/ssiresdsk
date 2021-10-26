@@ -50,7 +50,7 @@ Hajomodell1Becs = {
 #Nagy hajo modellje
 Hajomodell2 = {
     "M": [9.6, 15, 1.7],
-    "D": [6, 10, 0.1],
+    "D": [10, 20, 10],
     "Af": [1.7, 1.8, 1.6],
     'kw': 0.2, # ezzel szorozza be a sebessegbol eredo forgato erot. A kormanylapat hatasara 0, kis negativ szam lesz
     "length": 1.4,
@@ -66,8 +66,10 @@ Hajomodell2 = {
     'tauM': 0.1 # motorok idoallandoja
 }
 Hajomodell2Becs = {
-    "M": [10.2, 15, 1.5],
-    "D": [2, 4, 0.1],
+    "M": [10.2, 15, 5],
+    #csillapitas tagok
+    "Dm": [10, 4, 5], # ezt hasznalja a modellben
+    "Dp": [2, 4, 5], # ezt meg a PID szamitasanal
     "length": 1.4,
     'offset': 0.1, #ennyivel van hatrabb a forgaspont a hajo kozepetol, csak a megjeleniteshez kell
     "zoom": 200,
@@ -118,7 +120,8 @@ Nagyhajo445_modell = {
 
 Nagyhajo445_becsles = {
     "M": [12000, 20000, 200000],
-    "D": [200, 2000, 200000],
+    "Dm": [200, 2000, 200000],
+    "Dp": [200, 2000, 200000],
     'orrL': 5, #orrkormany tavolsaga a hajo forgaspontjatol
     'orrF': 950,
     'farL': 3,
