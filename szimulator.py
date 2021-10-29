@@ -8,7 +8,7 @@ import joystick
 import fizikaimodell
 import szimulaltelemek
 import szabalyzoelemek
-import megjelenit
+#import megjelenit
 from modellek import *
 
 fps = 50
@@ -28,7 +28,7 @@ def main():
     screen = pg.display.set_mode((1000, 1000), pg.RESIZABLE)
     hajo = hajomegjelenito.HajoObject(screen, hajoAdatok)
     joy = joystick.myJoystic(dt)
-    megj = megjelenit.disp()
+    #megj = megjelenit.disp()
     valosModell = fizikaimodell.physicalShip(hajoAdatok)
     #
     #valosModell.setEnvironment(Kornyezet1)
@@ -92,8 +92,8 @@ def main():
             hajo.resetPos()
         hajo.draw()
 
-        megj.setActVolt(AkForces)
-        megj.show()
+        #megj.setActVolt(AkForces)
+        #megj.show()
 
         # Ez is megjelenites
         pg.display.update()
