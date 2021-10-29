@@ -83,7 +83,8 @@ def main():
             print(e)
 
         # Ez valasztja ki hogy mirol menjen a vezerles
-        vt = Vins
+        #vt = Vins
+        vt = Vgps
 
         # Az aktuatorok vezerlojele es az INS sebesseg jele megy be a modellbe, amit a szabalyzas hasznal. 
         # Itt van a sensor fusion, a GPS es a modell szamitas osszerakasa is.
