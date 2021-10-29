@@ -91,6 +91,7 @@ def main():
         Vmod = modell.process(dt, Akt, vt)
         # A PID megkapja a modell altal josolt sebesseget es az input vektort is, ezekbol szamolja az aktuatorok jeleit
         Akt = PID.process(dt, Vmod, J)
+#        Akt = PID.processJoyOnly(dt, Vmod, J)
 
         x = 1 # arany, nem N
         #Akt = [1, 1, 0, 0]
